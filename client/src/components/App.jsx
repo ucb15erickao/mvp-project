@@ -14,8 +14,12 @@ class App extends React.Component {
   };
 
   render() {
-    <div>
-      <h1>TEST</h1>
-    </div>
+    return (
+      <div>
+        <h1>TEST</h1>
+      </div>
+    );
   };
 };
+
+export default App;

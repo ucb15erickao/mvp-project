@@ -1,25 +1,27 @@
 import React from 'react';
 import axios from 'axios';
 
+import style from '../style.css';
+import Table from './Room/Table'
+
 class App extends React.Component {
+
   constructor(props) {
     super(props);
     this.state = {
-      data: []
+      page: 1,
     };
   };
 
-  componentDidMount() {
-    //
+  render() {
+    const { page } = this.state;
+    if (page === 1) {
+      return (
+        <Table />
+      );
+    }
   };
 
-  render() {
-    return (
-      <div>
-        <h1>TEST</h1>
-      </div>
-    );
-  };
 };
 
 export default App;

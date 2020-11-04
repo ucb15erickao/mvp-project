@@ -9,23 +9,54 @@ server.use(express.json() );
 const wss = new WebSocket.Server({ port: 8080 });
 const clients = [];
 
-wss.on('connection', (ws) => {
+wss.on('connection', (ws, req) => {
+  const ip = req.socket.remoteAddress;
+  console.log('ip:', ip);
   if (clients.length < 2) {
     clients.push(ws);
-    console.log('clients:', clients);
+    console.log('clients.length:', clients.length);
   }
   ws.on('message', (data) => {
-    console.log('incoming message:', data);
-    console.log('wss.clients', wss.clients);
-    for (let i = 0; i < clients.length; i += 1) {
-      console.log('clients.length:', clients.length);
-      clients[i].send(`incoming message received and sent back to clients: ${data}`);
-    }
-    // ws.send(`incoming message received and send back to clients: ${data}`);
+    const parsed = JSON.parse(data);
+    console.log('Message from client:', parsed);
+    database.updateRoom(parsed, (updateError, postResult) => {
+      if (updateError) {
+        console.log('updateError:', updateError);
+      } else {
+        console.log('update room success:', postResult);
+        database.getRoom((getError, getData) => {
+          if (getError) {
+            console.log('getError:', getError);
+          } else {
+            const { deck, bettingRound, turn, board, p1, p2, pot } = getData;
+            const response = { deck, bettingRound, turn, board, p1, p2, pot };
+            for (let i = 0; i < clients.length; i += 1) {
+              console.log('clients.length:', clients.length);
+              console.log('response:', response);
+              clients[i].send(JSON.stringify(response));
+            }
+          }
+        });
+      }
+    });
   });
 });
 
 server.get('/room', (req, res) => {
+  // database.deleteRooms((error, data) => {
+  //   if (error) {
+  //     console.log('delete error');
+  //   } else {
+  //     console.log('rooms deleted:', data);
+  //     database.createRoom((err, d) => {
+  //       if (err) {
+  //         console.log('create error');
+  //       } else {
+  //         console.log('room created:', d);
+  //       }
+  //     });
+  //   }
+  // });
   database.getRoom((getError, getData) => {
     if (getError) {
       console.log('getError:', getError);
@@ -44,7 +75,6 @@ server.post('/room', (req, res) => {
       console.log('postError:', postError);
       res.status(400).send(postError);
     } else {
-      // console.log('postResult:', postResult);
       res.status(201).send(postResult);
     }
   });

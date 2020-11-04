@@ -8,7 +8,7 @@ const roomSchema = mongoose.Schema({
   playerCount: Number,
   bettingRound: Number,
   turn: Number,
-  community: [String],
+  board: [String],
   p1: {
     hand: [String],
     chips: Number,
@@ -36,4 +36,16 @@ const updateRoom = (updates, callback) => {
   });
 };
 
-module.exports = { Room, getRoom, updateRoom };
+const createRoom = (callback) => {
+  Room.create({_id: 1}, (createError, createResult) => {
+    callback(createError, createResult);
+  });
+}
+
+const deleteRooms = (callback) => {
+  Room.deleteMany({}, (deleteError, deleteResult) => {
+    callback(deleteError, deleteResult);
+  });
+}
+
+module.exports = { Room, getRoom, updateRoom, createRoom, deleteRooms };

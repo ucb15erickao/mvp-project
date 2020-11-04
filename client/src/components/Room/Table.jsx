@@ -5,6 +5,8 @@ import style from '../../style.css';
 import Player from './Player';
 import HUD from './HUD';
 
+const socket = new WebSocket("ws://localhost:8080");
+
 class Table extends React.Component {
 
   constructor(props) {
@@ -14,7 +16,7 @@ class Table extends React.Component {
       playerCount: 0,
       bettingRound: 0,
       turn: 1,
-      community: ['', '', '', '', ''],
+      board: ['', '', '', '', ''],
       p1: {
         hand: ['', ''],
         chips: 10,
@@ -34,46 +36,61 @@ class Table extends React.Component {
   };
 
   componentDidMount() {
-    const socket = new WebSocket("ws://localhost:8080");
+
     socket.addEventListener('open', (event) => {
-      socket.send('Hello Server!');
-    });
-    socket.addEventListener('message', (event) => {
-      console.log('Message from server:', event.data);
-    });
-    axios.get('/room')
-      .then(({ data }) => {
-        console.log('getData:', data);
-        if (data.playerCount === 0 || data.playerCount === 1) {
-          data.playerCount += 1;
+      console.log('event');
+
+
+      axios.get('/room')
+      .then(res => {
+        console.log('axios initial get:', res.data);
+        let players = res.data.playerCount;
+        console.log('pre adjust players:', players);
+        if (players === 0 || players === 1) {
+          players += 1;
+          console.log('+1 players:', players);
         } else {
-          data.playerCount = 1;
+          players = 1;
+          console.log('reset1 players:', players);
         }
 
-        this.setState({ playerCount: data.playerCount}, () => {
+
+
+
+        this.setState({ playerCount: players }, () => {
           const { playerCount } = this.state;
           console.log('this.state.playerCount:', playerCount);
           if (playerCount === 1) {
             console.log('before promise:', this.state.deck);
             new Promise((resolve, reject) => { this.play(); return resolve(); })
               .then(() => {
-                console.log('playPromise then:', this.state.deck);
-                axios.post('/room', this.state)
-                  .then((p1Result) => { console.log('p1Result:', p1Result.data) })
-                  .catch((p1Error) => { console.log('p1Error:', p1Error) });
+                console.log('playPromise then:', this.state);
+                socket.send(JSON.stringify(this.state));
+                socket.addEventListener('message', (event) => {
+                  const data = JSON.parse(event.data);
+                  console.log('socket message event:', data);
+                  this.setState(data, () => { console.log(this.state) });
+                });
               })
               .catch((error) => { console.log('playPromise error:', error) });
           } else if (playerCount === 2) {
-            axios.post('/room', { playerCount })
-              .then((p2Result) => {
-                console.log('p2Result:', p2Result.data);
-                this.setState(data, () => { console.log('this.state:', this.state) });
-              })
-              .catch((p2Error) => { console.log('p2Error:', p2Error) });
+            socket.send(JSON.stringify({ playerCount }));
+            socket.addEventListener('message', (event) => {
+              const data = JSON.parse(event.data);
+              console.log('socket message event:', data);
+              this.setState(data, () => { console.log(this.state) });
+            });
           }
         });
       })
       .catch((getError) => { console.log('getError:', getError) });
+
+
+
+
+    });
+
+
   };
 
   clicker() {
@@ -87,12 +104,13 @@ class Table extends React.Component {
     if (event.target.value === 'check') {
       //
     }
-    axios.post('/room', { turn })
-      .then((turnResult) => {
-        console.log('turnResult:', turnResult.data);
-        this.setState({ turn }, () => { console.log('this.state.turn:', this.state.turn) });
-      })
-      .catch((turnError) => { console.log('turnError:', turnError) });
+    // axios.post('/room', { turn })
+    //   .then((turnResult) => {
+    //     console.log('turnResult:', turnResult.data);
+    //     this.setState({ turn }, () => { console.log('this.state.turn:', this.state.turn) });
+    //   })
+    //   .catch((turnError) => { console.log('turnError:', turnError) });
+    socket.send(JSON.stringify({ turn }));
   }
 
   play() {
@@ -142,7 +160,7 @@ class Table extends React.Component {
   };
 
   render() {
-    const { deck, playerCount, bettingRound, turn, community, p1, p2 } = this.state;
+    const { deck, playerCount, bettingRound, turn, board, p1, p2 } = this.state;
     return (
       <div className={style.container}>
         <div className={style.room}>
@@ -159,7 +177,7 @@ class Table extends React.Component {
               </div>
             </div>
 
-            <div className={style.community}>
+            <div className={style.board}>
               <div>
                 {playerCount === 2 && (
                   <div>DEALER</div>
@@ -169,7 +187,7 @@ class Table extends React.Component {
                 )}
               </div>
 
-              <div>BOARD: {community}</div>
+              <div>BOARD: {board}</div>
 
               <div>
                 {playerCount === 1 && (

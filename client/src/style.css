@@ -54,7 +54,7 @@ html {
   color: green;
 }
 
-.community {
+.board {
   display: flex;
   flex-direction: row;
   justify-content: space-between;

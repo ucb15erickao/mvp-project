@@ -6,7 +6,7 @@ const HUD = ({ clicker, playerCount, bettingRound, turn }) => {
   if (playerCount === turn) {
     return (
       <div className={style.HUD}>
-        <button onClick={clicker} value='check'>CHECK</button>
+        <button onClick={clicker} value='check'>CHECK / CALL</button>
         <button onClick={clicker} value='bet'>BET</button>
         <button onClick={clicker} value='fold'>FOLD</button>
       </div>

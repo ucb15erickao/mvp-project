@@ -2,13 +2,14 @@ import React from 'react';
 
 import style from '../../style.css';
 
-const Player = ({ playerCount, hand, turn }) => {
+const Player = ({ playerCount, player, turn }) => {
+  const { hand, chips } = player;
   return (
     <div>
-      <span>{`PLAYER #${playerCount}`}</span>
       {playerCount === turn && (
-          <span className={style.turn}>*CURRENT TURN*</span>
-        )}
+        <span className={style.turn}>***CURRENT TURN***</span>
+      )}
+      <span>{` PLAYER ${playerCount}: ${chips} CHIPS`}</span>
       <div className={hand}>
         {hand[0].indexOf('♦') === -1 && hand[0].indexOf('♥') === -1 && (
           <span className={style.black}>{hand[0]} </span>

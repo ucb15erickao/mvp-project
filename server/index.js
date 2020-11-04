@@ -28,8 +28,8 @@ wss.on('connection', (ws, req) => {
           if (getError) {
             console.log('getError:', getError);
           } else {
-            const { deck, bettingRound, turn, board, p1, p2, pot } = getData;
-            const response = { deck, bettingRound, turn, board, p1, p2, pot };
+            const { deck, bettingRound, currentBets, turn, board, p1, p2, pot } = getData;
+            const response = { deck, bettingRound, currentBets, turn, board, p1, p2, pot };
             for (let i = 0; i < clients.length; i += 1) {
               console.log('clients.length:', clients.length);
               console.log('response:', response);

@@ -7,6 +7,7 @@ const roomSchema = mongoose.Schema({
   deck: [String],
   playerCount: Number,
   bettingRound: Number,
+  currentBets: [String],
   turn: Number,
   board: [String],
   p1: {

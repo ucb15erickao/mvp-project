@@ -12,10 +12,12 @@ class Table extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      deck: [],
       playerCount: 0,
-      bettingRound: 0,
       turn: 1,
+      bettingRound: 0,
+      currentBets: [],
+      pot: 0,
+      deck: [],
       board: ['', '', '', '', ''],
       p1: {
         hand: ['', ''],
@@ -28,119 +30,96 @@ class Table extends React.Component {
         chips: 10,
         bet: 0,
         roundAction: 0
-      },
-      pot: 0
+      }
     };
     this.play = this.play.bind(this);
     this.clicker = this.clicker.bind(this);
   };
 
   componentDidMount() {
-
     socket.addEventListener('open', (event) => {
-      console.log('event');
-
-
+      socket.addEventListener('message', (event) => {
+        const data = JSON.parse(event.data);
+        this.setState(data, () => { console.log('state updated via socket:', this.state) });
+      });
       axios.get('/room')
       .then(res => {
-        console.log('axios initial get:', res.data);
         let players = res.data.playerCount;
-        console.log('pre adjust players:', players);
-        if (players === 0 || players === 1) {
-          players += 1;
-          console.log('+1 players:', players);
-        } else {
-          players = 1;
-          console.log('reset1 players:', players);
-        }
-
-
-
-
+        if (players === 0 || players === 1) { players += 1; }
+        else { players = 1; }
         this.setState({ playerCount: players }, () => {
-          const { playerCount } = this.state;
-          console.log('this.state.playerCount:', playerCount);
-          if (playerCount === 1) {
-            console.log('before promise:', this.state.deck);
-            new Promise((resolve, reject) => { this.play(); return resolve(); })
-              .then(() => {
-                console.log('playPromise then:', this.state);
-                socket.send(JSON.stringify(this.state));
-                socket.addEventListener('message', (event) => {
-                  const data = JSON.parse(event.data);
-                  console.log('socket message event:', data);
-                  this.setState(data, () => { console.log(this.state) });
-                });
-              })
-              .catch((error) => { console.log('playPromise error:', error) });
-          } else if (playerCount === 2) {
-            socket.send(JSON.stringify({ playerCount }));
-            socket.addEventListener('message', (event) => {
-              const data = JSON.parse(event.data);
-              console.log('socket message event:', data);
-              this.setState(data, () => { console.log(this.state) });
-            });
-          }
+          const { playerCount, p1, p2 } = this.state;
+          socket.send(JSON.stringify({ playerCount, turn: 1, bettingRound: 0, currentBets: [], pot: 0, deck: [], board: ['', '', '', '', ''], p1, p2 }));
         });
       })
-      .catch((getError) => { console.log('getError:', getError) });
-
-
-
-
+      .catch((err) => { console.log('axios get error:', err) });
     });
-
-
   };
 
   clicker() {
-    let { turn } = this.state;
-    if (turn === 2) {
-      turn = 1;
+    let { turn, bettingRound, currentBets, pot } = this.state;
+    let roundComplete = false;
+    if (turn === 2) { turn = 1; }
+    else { turn = 2; }
+    currentBets.push(event.target.value);
+    console.log('currentBets:', currentBets);
+    if (currentBets.length > 1 && currentBets[currentBets.length - 1] === 'check') {
+      roundComplete = true;
+    }
+    if (roundComplete === true) {
+      const updates = this.state;
+      updates.turn = turn;
+      updates.bettingRound = bettingRound + 1;
+      updates.currentBets = [];
+      socket.send(JSON.stringify(updates));
+      new Promise((resolve, reject) => { this.play(); return resolve(); })
+        .then(() => { socket.send(JSON.stringify(updates)); })
+        .catch((error) => { console.log('playPromise error:', error) });
     } else {
-      turn = 2;
+      socket.send(JSON.stringify({ turn, currentBets }));
     }
-    console.log(event.target.value);
-    if (event.target.value === 'check') {
-      //
-    }
-    // axios.post('/room', { turn })
-    //   .then((turnResult) => {
-    //     console.log('turnResult:', turnResult.data);
-    //     this.setState({ turn }, () => { console.log('this.state.turn:', this.state.turn) });
-    //   })
-    //   .catch((turnError) => { console.log('turnError:', turnError) });
-    socket.send(JSON.stringify({ turn }));
   }
 
   play() {
-    let { deck, p1, p2 } = this.state;
-    console.log('deck.length:', deck.length);
-
-    if (deck.length === 0) {
+    let { bettingRound, deck, board, p1, p2 } = this.state;
+    if (deck.length < 1 || (bettingRound === 1 && deck.length < 4) || (bettingRound === 2 && deck.length < 3)) {
       deck = this.shuffleDeck();
-      console.log('shuffle deck:', deck);
     }
-
-    if (p1.hand[0] === '' && p2.hand[0] === '') {
+    if (bettingRound === 1) {
       p1.hand = [];
       p2.hand = [];
       for (let i = 0; i < 2; i += 1) {
         for (let j = 0; j < 2; j += 1) {
           const drawCard = this.deal(deck);
-          const draw = drawCard[0];
           deck = drawCard[1];
-          console.log('draw:', draw);
           if (j === 0) {
-            p1.hand.push(draw);
+            p1.hand.push(drawCard[0]);
           } else {
-            p2.hand.push(draw);
+            p2.hand.push(drawCard[0]);
           }
         }
       }
-      this.setState({ deck, p1, p2 }, () => { console.log('deck:', this.state.deck, '\np1 hand:', this.state.p1.hand, '\np2 hand:', this.state.p2.hand) });
+      this.setState({ deck, p1, p2 }, () => { console.log('HANDS DEALT\ndeck:', this.state.deck, '\np1 hand:', this.state.p1.hand, '\np2 hand:', this.state.p2.hand) });
+    } else if (bettingRound < 5) {
+      if (bettingRound === 2) {
+        for (let i = 0; i < 3; i += 1) {
+          const drawCard = this.deal(deck);
+          deck = drawCard[1];
+          board[i] = drawCard[0];
+        }
+      } else {
+        const drawCard = this.deal(deck);
+        deck = drawCard[1];
+        if (bettingRound === 3) {
+          board[3] = drawCard[0];
+        } else if (bettingRound === 4) {
+          board[4] = drawCard[0];
+        }
+      }
+      this.setState({ deck, board }, () => { console.log('FLOP\ndeck:', this.state.deck, '\nboard:', this.state.board) });
+    } else {
+      console.log('Game over. Reveal cards.');
     }
-
   }
 
   shuffleDeck() {
@@ -168,12 +147,42 @@ class Table extends React.Component {
           <div className={style.table}>
 
             <div className={style.opponent}>
-              <span>OPPONENT</span>
               {playerCount !== turn && (
-                <span className={style.turn}>*CURRENT TURN*</span>
+                <span className={style.turn}>***CURRENT TURN***</span>
+              )}
+              {playerCount === 1 && (
+                <span>{` OPPONENT: ${p2.chips} CHIPS`}</span>
+              )}
+              {playerCount === 2 && (
+                <span>{` OPPONENT: ${p2.chips} CHIPS`}</span>
               )}
               <div>
-                <span> [?] [?] </span>
+                {playerCount === 1 && (
+                  <span>
+                    {p2.hand.map((card, i) => {
+                      if (bettingRound === 5) {
+                        if (card.indexOf('♦') === -1 && card.indexOf('♥') === -1) {
+                          return (<span key={`${i}: ${card}`} className={style.black}>{` ${card} `}</span>);
+                        }
+                        return (<span key={`${i}: ${card}`} className={style.red}>{` ${card} `}</span>);
+                      }
+                      return (<span key={`${i}: ${card}`}>{' [?]'}</span>);
+                    })}
+                  </span>
+                )}
+                {playerCount === 2 && (
+                  <span>
+                    {p1.hand.map((card, i) => {
+                      if (bettingRound === 5) {
+                        if (card.indexOf('♦') === -1 && card.indexOf('♥') === -1) {
+                          return (<span key={`${i}: ${card}`} className={style.black}>{` ${card} `}</span>);
+                        }
+                        return (<span key={`${i}: ${card}`} className={style.red}>{` ${card} `}</span>);
+                      }
+                      return (<span key={`${i}: ${card}`}>{' [?]'}</span>);
+                    })}
+                  </span>
+                )}
               </div>
             </div>
 
@@ -187,7 +196,36 @@ class Table extends React.Component {
                 )}
               </div>
 
-              <div>BOARD: {board}</div>
+              <div>
+                BOARD: { board.map((card, i) => {
+                  if (card === '') {
+                    if (i === 4) {
+                      return (<span key={`${i}: ${card}`}>{' [?]'}</span>);
+                    }
+                    return (<span key={`${i}: ${card}`}>{' [?],'}</span>);
+                  } else if (card.indexOf('♦') === -1 && card.indexOf('♥') === -1) {
+                    if (i === 4) {
+                      return (<span key={`${i}: ${card}`} className={style.black}>{` ${card}`}</span>);
+                    }
+                    return (
+                      <span key={`${i}: ${card}`}>
+                        <span className={style.black}>{` ${card}`}</span>
+                        <span>,</span>
+                      </span>
+                    );
+                  } else {
+                    if (i === 4) {
+                      return (<span key={`${i}: ${card}`} className={style.red}>{` ${card}`}</span>);
+                    }
+                    return (
+                      <span key={`${i}: ${card}`}>
+                        <span className={style.red}>{` ${card}`}</span>
+                        <span>,</span>
+                      </span>
+                    );
+                  }
+                }) }
+              </div>
 
               <div>
                 {playerCount === 1 && (
@@ -200,10 +238,10 @@ class Table extends React.Component {
             </div>
 
             {playerCount === 1 && (
-              <Player playerCount={playerCount} hand={p1.hand} turn={turn} />
+              <Player playerCount={playerCount} player={p1} turn={turn} />
             )}
             {playerCount === 2 && (
-              <Player playerCount={playerCount} hand={p2.hand} turn={turn} />
+              <Player playerCount={playerCount} player={p2} turn={turn} />
             )}
 
           </div>

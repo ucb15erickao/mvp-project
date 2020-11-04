@@ -12,7 +12,7 @@ html {
   border: 0;
   margin: 0;
   margin-top: 18px;
-  padding: 18px;
+  padding: 32px;
   box-sizing: border-box;
   font-family: sans-serif;
   color: white;
@@ -42,6 +42,11 @@ html {
   font-size: 12px;
 }
 
+.bettingLine {
+  font-family: serif;
+  font-size: 12px;
+}
+
 .black {
   color: black;
 }
@@ -61,6 +66,15 @@ html {
 }
 
 .HUD {
-  margin-top: 18px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+  margin-top: 32px;
   text-align: center;
+  gap: 118px;
+}
+
+.betButton {
+  margin-left: 8px;
 }

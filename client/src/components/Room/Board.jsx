@@ -1,8 +1,7 @@
 import React from 'react';
-
 import style from '../../style.css';
 
-const Board = ({ playerCount, prevFirstBet, board }) => {
+const Board = ({ playerCount, prevFirstBet, pot, board }) => {
   return (
     <div className={style.board}>
       <div>
@@ -15,34 +14,51 @@ const Board = ({ playerCount, prevFirstBet, board }) => {
       </div>
 
       <div>
-        BOARD: {board.map((card, i) => {
-        if (card === '') {
-          if (i === 4) {
-            return (<span key={`${i}: ${card}`}>{' [?]'}</span>);
-          }
-          return (<span key={`${i}: ${card}`}>{' [?] ,'}</span>);
-        } else if (card.indexOf('♦') === -1 && card.indexOf('♥') === -1) {
-          if (i === 4) {
-            return (<span key={`${i}: ${card}`} className={style.black}>{` ${card}`}</span>);
-          }
-          return (
-            <span key={`${i}: ${card}`}>
-              <span className={style.black}>{` ${card}`}</span>
-              <span> ,</span>
-            </span>
-          );
-        } else {
-          if (i === 4) {
-            return (<span key={`${i}: ${card}`} className={style.red}>{` ${card}`}</span>);
-          }
-          return (
-            <span key={`${i}: ${card}`}>
-              <span className={style.red}>{` ${card}`}</span>
-              <span> ,</span>
-            </span>
-          );
-        }
-      })}
+        <div className={style.bettingLine}>{`CURRENT POT: ${pot}`}</div>
+        <div>
+          BOARD: {board.map((card, i) => {
+            if (card === '') {
+              if (i === 4) {
+                return (<span key={`${i}: ${card}`}>{' [ ? ]'}</span>);
+              }
+              return (<span key={`${i}: ${card}`}>{' [ ? ] ,'}</span>);
+            } else if (card.indexOf('♦') === -1 && card.indexOf('♥') === -1) {
+              if (i === 4) {
+                return (
+                  <span key={`${i}: ${card}`}>
+                    <span> [ </span>
+                    <span className={style.black}>{card}</span>
+                    <span> ] </span>
+                  </span>
+                );
+              }
+              return (
+                <span key={`${i}: ${card}`}>
+                  <span> [ </span>
+                  <span className={style.black}>{card}</span>
+                  <span> ] ,</span>
+                </span>
+              );
+            } else {
+              if (i === 4) {
+                return (
+                  <span key={`${i}: ${card}`}>
+                    <span> [ </span>
+                    <span className={style.red}>{card}</span>
+                    <span> ] </span>
+                  </span>
+                );
+              }
+              return (
+                <span key={`${i}: ${card}`}>
+                  <span> [ </span>
+                  <span className={style.red}>{card}</span>
+                  <span> ] ,</span>
+                </span>
+              );
+            }
+          })}
+        </div>
       </div>
 
       <div>

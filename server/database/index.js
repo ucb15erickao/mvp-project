@@ -4,11 +4,13 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true,
 
 const roomSchema = mongoose.Schema({
   _id: Number,
-  deck: [String],
   playerCount: Number,
+  prevFirstBet: Number,
+  turn: Number,
   bettingRound: Number,
   currentBets: [String],
-  turn: Number,
+  pot: Number,
+  deck: [String],
   board: [String],
   p1: {
     hand: [String],
@@ -19,8 +21,7 @@ const roomSchema = mongoose.Schema({
     hand: [String],
     chips: Number,
     bet: Number
-  },
-  pot: Number
+  }
 });
 
 const Room = mongoose.model('Room', roomSchema);

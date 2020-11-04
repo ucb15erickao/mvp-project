@@ -28,12 +28,10 @@ wss.on('connection', (ws, req) => {
           if (getError) {
             console.log('getError:', getError);
           } else {
-            const { deck, bettingRound, currentBets, turn, board, p1, p2, pot } = getData;
-            const response = { deck, bettingRound, currentBets, turn, board, p1, p2, pot };
+            console.log('getData:', getData);
+            getData.playerCount = undefined;
             for (let i = 0; i < clients.length; i += 1) {
-              console.log('clients.length:', clients.length);
-              console.log('response:', response);
-              clients[i].send(JSON.stringify(response));
+              clients[i].send(JSON.stringify(getData));
             }
           }
         });
@@ -57,25 +55,12 @@ server.get('/room', (req, res) => {
   //     });
   //   }
   // });
-  database.getRoom((getError, getData) => {
-    if (getError) {
-      console.log('getError:', getError);
-      res.status(404).send(getError);
+  database.getRoom((err, roomData) => {
+    if (err) {
+      console.log('axios get error:', err);
+      res.status(404).send(err);
     } else {
-      // console.log('getData:', getData);
-      res.status(200).send(getData);
-    }
-  });
-});
-
-server.post('/room', (req, res) => {
-  // console.log('req.body:', req.body);
-  database.updateRoom(req.body, (postError, postResult) => {
-    if (postError) {
-      console.log('postError:', postError);
-      res.status(400).send(postError);
-    } else {
-      res.status(201).send(postResult);
+      res.status(200).send(roomData);
     }
   });
 });

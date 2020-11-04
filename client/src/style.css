@@ -1,5 +1,5 @@
 html {
-  background-color: black;
+  background-color: royalblue;
 }
 
 .container {
@@ -21,7 +21,7 @@ html {
 
 .titleBar {
   font-family: serif;
-  color: royalblue;
+  color: black;
   text-align: center;
 }
 

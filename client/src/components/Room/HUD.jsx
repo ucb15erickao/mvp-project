@@ -3,7 +3,13 @@ import React from 'react';
 import style from '../../style.css';
 
 const HUD = ({ clicker, playerCount, bettingRound, turn }) => {
-  if (playerCount === turn) {
+  if (bettingRound === 5) {
+    return (
+      <div className={style.HUD}>
+        <button onClick={clicker} value='check'>PLAY AGAIN</button>
+      </div>
+    );
+  } else if (playerCount === turn) {
     return (
       <div className={style.HUD}>
         <button onClick={clicker} value='check'>CHECK / CALL</button>

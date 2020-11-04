@@ -1,22 +1,35 @@
 import React from 'react';
 import style from '../../style.css';
 
-const Player = ({ playerCount, turn, bettingRound, player }) => {
+const Player = ({ playerCount, prevFirstBet, turn, bettingRound, player }) => {
   let { hand, chips, bet } = player;
   if (hand[0] === '') {  hand = ['[ ? ]', '[ ? ]'];  }
   return (
     <div>
-      {playerCount === turn && bettingRound !== 5 && (
-        <span className={style.turn}>******************</span>
-      )}
 
-      <span>{` PLAYER ${playerCount}`}</span>
+      <div>
+        {prevFirstBet === playerCount && (
+          <span className={style.betTracker}>(FIRST BET THIS ROUND)</span>
+        )}
+        <div>
+          {playerCount === turn && bettingRound !== 5 && (
+            <span className={style.turn}>******************</span>
+          )}
 
-      {playerCount === turn && bettingRound !== 5 && (
-        <span className={style.turn}>******************</span>
-      )}
+          <span>{` PLAYER ${playerCount}`}</span>
 
-      <div className={style.bettingLine}>{`CHIPS: ${chips} --- CURRENT BET: ${bet}`}</div>
+          {playerCount === turn && bettingRound !== 5 && (
+            <span className={style.turn}>******************</span>
+          )}
+
+          <div className={style.bettingLine}>
+            {`CHIPS: ${chips} -------- CURRENT BET: ${bet}`}
+            {bettingRound === 0 && player.bet === 1 && (
+              <span> (ante) </span>
+            )}
+          </div>
+        </div>
+      </div>
 
       <div className={hand}>
         {hand[1] === '[ ? ]' && (

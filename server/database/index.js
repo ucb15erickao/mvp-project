@@ -15,12 +15,14 @@ const roomSchema = mongoose.Schema({
   p1: {
     hand: [String],
     chips: Number,
-    bet: Number
+    bet: Number,
+    minBet: Number
   },
   p2: {
     hand: [String],
     chips: Number,
-    bet: Number
+    bet: Number,
+    minBet: Number
   }
 });
 

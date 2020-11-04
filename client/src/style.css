@@ -1,5 +1,5 @@
 html {
-  background-color: royalblue;
+  background-color: #654321;
 }
 
 .container {
@@ -21,7 +21,7 @@ html {
 
 .titleBar {
   font-family: serif;
-  color: black;
+  color: royalblue;
   text-align: center;
 }
 
@@ -40,6 +40,11 @@ html {
   color: yellow;
   font-style: italic;
   font-size: 12px;
+}
+
+.betTracker {
+  color: red;
+  font-size: 11px;
 }
 
 .bettingLine {

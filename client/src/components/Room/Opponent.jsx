@@ -1,20 +1,32 @@
 import React from 'react';
 import style from '../../style.css';
 
-const Opponent = ({ playerCount, opponent, turn, bettingRound }) => {
+const Opponent = ({ playerCount, prevFirstBet, opponent, turn, bettingRound, currentBets }) => {
   return (
     <div className={style.opponent}>
-      {playerCount !== turn && bettingRound !== 5 && (
-        <span className={style.turn}>******************</span>
-      )}
+      <div>
+        {prevFirstBet !== playerCount && (
+          <span className={style.betTracker}>(FIRST BET THIS ROUND)</span>
+        )}
+        <div>
+          {playerCount !== turn && bettingRound !== 5 && (
+            <span className={style.turn}>******************</span>
+          )}
 
-      <span>{` OPPONENT`}</span>
+          <span>{` OPPONENT`}</span>
 
-      {playerCount !== turn && bettingRound !== 5 && (
-        <span className={style.turn}>******************</span>
-      )}
+          {playerCount !== turn && bettingRound !== 5 && (
+            <span className={style.turn}>******************</span>
+          )}
 
-      <div className={style.bettingLine}>{`CHIPS: ${opponent.chips} --- CURRENT BET: ${opponent.bet}`}</div>
+          <div className={style.bettingLine}>
+            {`CHIPS: ${opponent.chips} -------- CURRENT BET: ${opponent.bet}`}
+            {bettingRound === 0 && opponent.bet === 1 && (
+              <span> (ante) </span>
+            )}
+          </div>
+        </div>
+      </div>
 
       <div>
         {opponent.hand.map((card, i) => {

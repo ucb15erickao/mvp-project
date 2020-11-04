@@ -13,6 +13,7 @@ wss.on('connection', ws => {
         database.getRoom((err, roomData) => {
           if (err) {  console.log('getRoom error:', err);  }
           else {
+            console.log('roomData:', roomData);
             roomData.playerCount = undefined;
             for (let i = 0; i < clients.length; i += 1) {  clients[i].send(JSON.stringify(roomData));  }
           }

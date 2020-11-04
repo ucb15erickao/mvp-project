@@ -1,11 +1,7 @@
 import React from 'react';
 import style from '../../style.css';
 
-const HUD = ({ clicker, changeBet, playerCount, turn, bettingRound, currentBets, player }) => {
-  const bets = [];
-  for (let i = 1, { chips } = player; i <= chips; i++) {
-    bets.push(i);
-  }
+const HUD = ({ clicker, changeBet, playerCount, turn, bettingRound, currentBets, player, opponent }) => {
   if (bettingRound === 5) {
     if (currentBets.length === 1 && Number(currentBets[0]) === playerCount) {
       return (
@@ -21,12 +17,21 @@ const HUD = ({ clicker, changeBet, playerCount, turn, bettingRound, currentBets,
       );
     }
   } else if (playerCount === turn) {
+    let minimum = 1;
+    if (currentBets[currentBets.length - 1] === 'bet') {
+      minimum = opponent.bet - player.bet + 1;
+    }
+    console.log('minimum:', minimum);
+    const bets = [];
+    for (let i = minimum, { chips } = player; i <= chips; i++) {
+      bets.push(i);
+    }
     return (
       <div className={style.HUD}>
         <button onClick={clicker} value='check'>CHECK / CALL</button>
 
         <div>
-          <label className={style.bettingLine}> Adjust Bet: </label>
+          <label className={style.bettingLine}> ADJUST BET: </label>
           <select onChange={changeBet}>
             {bets.map(amount => (
               <option value={amount}>{amount}</option>

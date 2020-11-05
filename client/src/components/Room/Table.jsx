@@ -6,7 +6,7 @@ import Opponent from './Opponent';
 import Board from './Board';
 import Player from './Player';
 import HUD from './HUD';
-import { shuffleDeck, deal } from './functions';
+import { shuffleDeck, deal, pick5, determineWinner } from './gameFunctions';
 
 const socket = new WebSocket("ws://localhost:8080");
 class Table extends React.Component {
@@ -14,36 +14,30 @@ class Table extends React.Component {
     super(props);
     this.state = {
       playerCount: 0,
+      gameOver: false,
+      winner: 0,
       prevFirstBet: 1,
       turn: 1,
-      bettingRound: 0,
+      bettingRound: 1,
       currentBets: [],
-      betSelect: 1,
+      betSelect: 0,
       pot: 0,
       deck: [],
       board: ['', '', '', '', ''],
-      p1: {
-        hand: ['', ''],
-        chips: 24,
-        bet: 1,
-        minBet: 1
-      },
-      p2: {
-        hand: ['', ''],
-        chips: 24,
-        bet: 1,
-        minBet: 1
-      }
+      p1: { hand: ['', ''], chips: 19, bet: 1, minBet: 1 },
+      p2: { hand: ['', ''], chips: 19, bet: 1, minBet: 1 }
     };
+    socket.addEventListener('message', serverMessage => {
+      const parsedSM = JSON.parse(serverMessage.data);
+      this.setState(parsedSM, () => {
+        const { p1, p2 } = this.state;
+        const betSelect = eval(`p${this.state.playerCount}`).minBet;
+        this.setState({ betSelect }, () => {  console.log('state.betSelect set to min by socket:', this.state.betSelect);  });
+      });
+    });
     this.play = this.play.bind(this);
     this.clicker = this.clicker.bind(this);
     this.changeBet = this.changeBet.bind(this);
-    socket.addEventListener('message', serverMessage => {
-      const parsedSM = JSON.parse(serverMessage.data);
-      console.log('this.state:', this.state);
-      parsedSM.betSelect = eval(`this.state.p${this.state.playerCount}`).minBet;
-      this.setState(parsedSM, () => {  console.log('WebSocket:', this.state);  });
-    });
   };
 
   componentDidMount() {
@@ -53,29 +47,28 @@ class Table extends React.Component {
           let { playerCount } = res.data;
           if (playerCount < 2) {  playerCount++;  }
           else {  playerCount = 1;  }
-          this.setState({ playerCount }, () => {  socket.send(JSON.stringify(this.state));  });
+          this.setState({ playerCount }, () => {  this.play();  });
         })
         .catch(() => {  console.log('axios get error');  });
     });
   };
 
   changeBet() {
-    this.setState({ betSelect: event.target.value }, () => {  console.log('betSelect:', this.state.betSelect);  });
+    this.setState({ betSelect: Number(event.target.value) }, () => {  console.log('bet selected:', this.state.betSelect);  });
   };
 
   clicker() {
-    let { playerCount, prevFirstBet, turn, bettingRound, currentBets, betSelect, pot, p1, p2 } = this.state;
+    let { playerCount, prevFirstBet, turn, bettingRound, currentBets, betSelect, pot, board, p1, p2 } = this.state;
     if (turn === 2) {  turn = 1;  }
     else {  turn = 2;  }
     currentBets.push(event.target.value);
 
-    if (event.target.value === 'fold') {
-      const winnings = pot + p1.bet + p2.bet;
-      p1.bet = 0, p2.bet = 0;
-      if (playerCount === 1) {  p2.chips += winnings;  }
-      else {  p1.chips += winnings;  }
-      this.setState({ p1, p2 }, () => {  this.nextHand();  });
-
+    if (event.target.value === 'reset') {
+      this.reset();
+    } else if (event.target.value === 'fold') {
+      let opponent = 1;
+      if (playerCount === 1) {  opponent++;  }
+      this.setState({ winner: opponent }, () => {  this.play();  });
     } else {
       let  player = p1, opponent = p2;
       if (playerCount === 2) {  player = p2, opponent = p1;  }
@@ -85,15 +78,41 @@ class Table extends React.Component {
         player.chips -= Number(betSelect);
         opponent.minBet = player.bet - opponent.bet + 1;
       } else if (event.target.value === 'check' && currentBets[currentBets.length - 2] === 'bet') {
-        console.log('currentBets:', currentBets);
+        const difference = opponent.bet - player.bet;
+        if (difference <= player.chips) {
+          player.bet += difference;
+          player.chips -= difference;
+        } else {
+          player.bet += player.chips;
+          const excess = difference - player.chips;
+          player.chips = 0;
+          opponent.bet -= excess;
+          opponent.chips += excess;
+        }
       }
 
-      if (currentBets.length > 1 && (event.target.value === 'check' || Number.isNaN(Number(event.target.value)) === false)) {
+      if (currentBets.length > 1 && event.target.value === 'check') {
         if (bettingRound < 5) {
           const newPot = pot + p1.bet + p2.bet;
           p1.bet = 0, p2.bet = 0;
-          this.setState({ turn: prevFirstBet, bettingRound: bettingRound + 1, currentBets: [], pot: newPot, p1, p2 }, () => {  this.play();  });
+          p1.minBet = 1, p2.minBet = 1;
+          const updates = { turn: prevFirstBet, bettingRound: bettingRound + 1, currentBets: [], pot: newPot, p1, p2 };
+          if (bettingRound === 4) {
+            const p1top5 = pick5(board.concat(p1.hand));
+            const p2top5 = pick5(board.concat(p2.hand));
+            let gameWinner = determineWinner(p1top5, p2top5);
+            if (JSON.stringify(gameWinner) === JSON.stringify(p1top5)) {  gameWinner = 1;  }
+            else {  gameWinner = 2;  }
+            updates.winner = gameWinner;
+          }
+          this.setState(updates, () => {  this.play();  });
         } else {  this.nextHand();  }
+      } else if (Number.isNaN(Number(event.target.value)) === false) {
+        if (Number.isNaN(Number(currentBets[currentBets.length - 2])) === false) {
+          this.nextHand();
+        } else {
+          this.setState({ currentBets }, () => {  socket.send(JSON.stringify({ currentBets }));  });
+        }
       } else {
         let updates = { turn, currentBets, p1: player, p2: opponent };
         if (playerCount === 2) {  updates = { turn, currentBets, p1: opponent, p2: player };  }
@@ -113,33 +132,42 @@ class Table extends React.Component {
       }
       this.setState({ deck, p1, p2 }, () => {  socket.send(JSON.stringify(this.state));  });
     } else if (bettingRound < 5) {
-      if (bettingRound === 2) {
-        for (let i = 0; i < 3; i += 1) {
-          [ board[i], deck ] = deal(deck);
-        }
-      } else {  [ board[bettingRound], deck ] = deal(deck);  }
+      if (bettingRound === 2) {  for (let i = 0; i < 3; i += 1) { [board[i], deck] = deal(deck); }  }
+      else {  [board[bettingRound], deck] = deal(deck);  }
       this.setState({ deck, board }, () => {  socket.send(JSON.stringify(this.state));  });
     } else {  socket.send(JSON.stringify(this.state));  }
   };
 
   nextHand() {
-    const { prevFirstBet, p1, p2 } = this.state;
+    const { gameOver, winner, prevFirstBet, pot, p1, p2 } = this.state;
+    const winnings = pot + p1.bet + p2.bet;
+    if (winner === 1) {  p1.chips += winnings;  }
+    else {  p2.chips += winnings;  }
     let newFirstBet = 1;
     if (prevFirstBet === 1) {  newFirstBet++;  }
     p1.hand = ['', ''], p2.hand = ['', ''];
     p1.chips--, p2.chips--;
-    p1.bet++, p2.bet++;
-    if (this.state.p1.chips < 0 || this.state.p2.chips < 0 ) {
-      let winner = 'PLAYER 1';
-      if (this.state.p1.chips < 0) {  winner = 'PLAYER 2';  }
-      alert(`GAME OVER. ${winner} WINS.`);
-    }
-    const updates = { prevFirstBet: newFirstBet, turn: newFirstBet, bettingRound: 0, pot: 0, currentBets: [], board: ['', '', '', '', ''], p1, p2 };
-    this.setState(updates, () => {  socket.send(JSON.stringify(this.state));  });
+    p1.bet = 1, p2.bet = 1;
+    p1.minBet = 1, p2.minBet = 1;
+    const updates = { winner: 0, prevFirstBet: newFirstBet, turn: newFirstBet, bettingRound: 1, pot: 0, currentBets: [], board: ['', '', '', '', ''], p1, p2 };
+    if (p1.chips < 0 || p2.chips < 0 ) {  updates.gameOver = true;  }
+    this.setState(updates, () => {  this.play();  });
+  };
+
+  reset() {
+    const { prevFirstBet, p1, p2 } = this.state;
+    let newFirstBet = 1;
+    if (prevFirstBet === 1) {  newFirstBet++;  }
+    p1.hand = ['', ''], p2.hand = ['', ''];
+    p1.chips = 19, p2.chips = 19;
+    p1.bet = 1, p2.bet = 1;
+    p1.minBet = 1, p2.minBet = 1;
+    const updates = { gameOver: false, winner: 0, prevFirstBet: newFirstBet, turn: newFirstBet, bettingRound: 1, pot: 0, currentBets: [], board: ['', '', '', '', ''], p1, p2 };
+    this.setState(updates, () => {  this.play();  });
   };
 
   render() {
-    const { playerCount, prevFirstBet, turn, bettingRound, currentBets, pot, deck, board, p1, p2 } = this.state;
+    const { playerCount, gameOver, winner, prevFirstBet, turn, bettingRound, currentBets, pot, deck, board, p1, p2 } = this.state;
     let opponent = p2, player = p1;
     if (playerCount === 2) {  opponent = p1; player = p2;  }
     return (
@@ -147,11 +175,11 @@ class Table extends React.Component {
         <div className={style.room}>
           <h1 className={style.titleBar}>Texas Hold'em</h1>
           <div className={style.table}>
-            <Opponent playerCount={playerCount} prevFirstBet={prevFirstBet} turn={turn} bettingRound={bettingRound} opponent={opponent} />
-            <Board playerCount={playerCount} prevFirstBet={prevFirstBet} pot={pot} board={board} />
-            <Player playerCount={playerCount} prevFirstBet={prevFirstBet} turn={turn} bettingRound={bettingRound} player={player} />
+            <Opponent playerCount={playerCount} gameOver={gameOver} winner={winner} prevFirstBet={prevFirstBet} turn={turn} bettingRound={bettingRound} currentBets={currentBets} opponent={opponent} />
+            <Board playerCount={playerCount} gameOver={gameOver} prevFirstBet={prevFirstBet} pot={pot} board={board} />
+            <Player playerCount={playerCount} gameOver={gameOver} winner={winner} prevFirstBet={prevFirstBet} turn={turn} bettingRound={bettingRound} player={player} />
           </div>
-          <HUD clicker={this.clicker} changeBet={this.changeBet} playerCount={playerCount} turn={turn} bettingRound={bettingRound} currentBets={currentBets} player={player} opponent={opponent} />
+          <HUD clicker={this.clicker} changeBet={this.changeBet} playerCount={playerCount} gameOver={gameOver} winner={winner} turn={turn} bettingRound={bettingRound} currentBets={currentBets} player={player} opponent={opponent} />
         </div>
       </div>
     );

@@ -5,6 +5,8 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true,
 const roomSchema = mongoose.Schema({
   _id: Number,
   playerCount: Number,
+  gameOver: Boolean,
+  winner: Number,
   prevFirstBet: Number,
   turn: Number,
   bettingRound: Number,

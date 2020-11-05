@@ -12,9 +12,10 @@ html {
   border: 0;
   margin: 0;
   margin-top: 18px;
-  padding: 32px;
+  padding: 18px;
   box-sizing: border-box;
   font-family: sans-serif;
+  font-size: 19px;
   color: white;
   background-color: #654321;
 }
@@ -26,30 +27,92 @@ html {
 }
 
 .table {
-  padding: 18px;
+  margin: 0;
+  padding: 18px 88px;
   border-radius: 50%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 500px;
+  height: 525px;
   background-color: green;
   text-align: center;
 }
 
+.playerContainer {
+  vertical-align: bottom;
+}
+
+.opponentContainer {
+  vertical-align: top;
+}
+
+.player {
+  margin-bottom: 8px;
+}
+
+.opponent {
+  margin-top: 8px;
+}
+
 .turn {
-  color: yellow;
-  font-style: italic;
-  font-size: 12px;
+  font-family: serif;
+  color: royalblue;
+  font-size: 15px;
+  font-weight: 900;
 }
 
 .betTracker {
+  font-family: serif;
   color: red;
-  font-size: 11px;
+  font-size: 15px;
+  letter-spacing: 2px;
+}
+
+.betTrackerHidden {
+  font-family: serif;
+  color: green;
+  font-size: 15px;
+  letter-spacing: 2px;
+}
+
+.pBT {
+  margin: 8px 0;
+}
+
+.oppBT {
+  margin: 8px 0;
 }
 
 .bettingLine {
+  margin: 0;
+  color: #654321;
   font-family: serif;
-  font-size: 12px;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  vertical-align: baseline;
+}
+
+.pot {
+  margin-top: 8px;
+  color: #654321;
+  font-family: serif;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.ante {
+  font-family: sans-serif;
+  font-size: 9px;
+  vertical-align: super;
+  margin-right: 1px;
+  letter-spacing: 0;
+}
+
+.cards {
+  font-size: 32px;
+  margin: 0;
 }
 
 .black {
@@ -64,20 +127,45 @@ html {
   color: green;
 }
 
+.lost {
+  color: red;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
 .board {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  vertical-align: middle;
+}
+
+.dealer {
+  margin-top: 8px;
+}
+
+.gameOver {
+  display: block;
+  justify-content: center;
 }
 
 .HUD {
   display: flex;
   flex-direction: row;
   justify-content: center;
+  align-items: baseline;
   width: 100%;
   margin-top: 32px;
   text-align: center;
-  gap: 118px;
+  gap: 132px;
+}
+
+.betLabel {
+  font-size: 12px;
+}
+
+.betMenu {
+  outline: none;
 }
 
 .betButton {

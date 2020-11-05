@@ -1,36 +1,56 @@
 import React from 'react';
 import style from '../../style.css';
 
-const Opponent = ({ playerCount, prevFirstBet, opponent, turn, bettingRound, currentBets }) => {
+const Opponent = ({ playerCount, gameOver, winner, prevFirstBet, opponent, turn, bettingRound, currentBets }) => {
   return (
-    <div className={style.opponent}>
-      <div>
-        {prevFirstBet !== playerCount && (
-          <span className={style.betTracker}>(FIRST BET THIS ROUND)</span>
+    <div className={style.opponentContainer}>
+
+      <div className={style.bettingLine}>
+        {opponent.chips < 0 && (
+          <span>
+            <span className={style.lost}>{`< CHIPS : ${opponent.chips} >`}</span>
+            <span>{` -------- < CURRENT BET :  ${opponent.bet}`}</span>
+          </span>
         )}
-        <div>
-          {playerCount !== turn && bettingRound !== 5 && (
-            <span className={style.turn}>******************</span>
-          )}
-
-          <span>{` OPPONENT`}</span>
-
-          {playerCount !== turn && bettingRound !== 5 && (
-            <span className={style.turn}>******************</span>
-          )}
-
-          <div className={style.bettingLine}>
-            {`CHIPS: ${opponent.chips} -------- CURRENT BET: ${opponent.bet}`}
-            {bettingRound === 0 && opponent.bet === 1 && (
-              <span> (ante) </span>
-            )}
-          </div>
-        </div>
+        {opponent.chips >= 0 && (
+          <span>{`< CHIPS : ${opponent.chips} > -------- < CURRENT BET :  ${opponent.bet}`}</span>
+        )}
+        {bettingRound === 0 && opponent.bet === 1 && (
+          <span className={style.ante}> [ante]</span>
+        )}
+        <span> &gt;</span>
       </div>
 
-      <div>
+
+      <div className={style.opponent}>
+        {playerCount !== turn && winner === 0 && gameOver === false && (
+          <span className={style.turn}>******************|||||||| </span>
+        )}
+
+        <span>{` (( OPPONENT ))`}</span>
+        {winner !== 0 && winner !== playerCount && (
+          <span> WINS THE CURRENT POT!</span>
+        )}
+
+        {playerCount !== turn && winner === 0 && gameOver === false && (
+          <span className={style.turn}> ||||||||******************</span>
+        )}
+      </div>
+
+
+      <div className={style.oppBT}>
+        {prevFirstBet !== playerCount && (
+          <div className={style.betTracker}>[UNDER THE GUN]</div>
+        )}
+        {prevFirstBet === playerCount && (
+          <div className={style.betTrackerHidden}>[UNDER THE GUN]</div>
+        )}
+      </div>
+
+
+      <div className={style.cards}>
         {opponent.hand.map((card, i) => {
-          if (bettingRound === 5) {
+          if (/*bettingRound === 5*/winner !== 0 && currentBets.indexOf('fold') === -1) {
             if (card.indexOf('♦') === -1 && card.indexOf('♥') === -1) {
               if (i === 0) {
                 return (
@@ -72,6 +92,7 @@ const Opponent = ({ playerCount, prevFirstBet, opponent, turn, bettingRound, cur
           return (<span key={`${i}: ${card}`}>{' [ ? ]'}</span>);
         })}
       </div>
+
     </div>
   );
 };

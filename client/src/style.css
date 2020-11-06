@@ -54,7 +54,7 @@ html {
   margin-top: 8px;
 }
 
-.turn {
+.startRound {
   font-family: serif;
   color: royalblue;
   font-size: 15px;
@@ -75,11 +75,7 @@ html {
   letter-spacing: 2px;
 }
 
-.pBT {
-  margin: 8px 0;
-}
-
-.oppBT {
+.BTcontainer {
   margin: 8px 0;
 }
 

@@ -9,13 +9,13 @@ const Opponent = ({ playerCount, gameOver, winner, prevFirstBet, opponent, turn,
         {opponent.chips < 0 && (
           <span>
             <span className={style.lost}>{`< CHIPS : ${opponent.chips} >`}</span>
-            <span>{` -------- < CURRENT BET :  ${opponent.bet}`}</span>
+            <span>{` ----- < CURRENT BET :  ${opponent.bet}`}</span>
           </span>
         )}
         {opponent.chips >= 0 && (
-          <span>{`< CHIPS : ${opponent.chips} > -------- < CURRENT BET :  ${opponent.bet}`}</span>
+          <span>{`< CHIPS : ${opponent.chips} > ----- < CURRENT BET :  ${opponent.bet}`}</span>
         )}
-        {bettingRound === 0 && opponent.bet === 1 && (
+        {bettingRound === 1 && opponent.bet === 1 && (
           <span className={style.ante}> [ante]</span>
         )}
         <span> &gt;</span>
@@ -23,8 +23,8 @@ const Opponent = ({ playerCount, gameOver, winner, prevFirstBet, opponent, turn,
 
 
       <div className={style.opponent}>
-        {playerCount !== turn && winner === 0 && gameOver === false && (
-          <span className={style.turn}>******************|||||||| </span>
+        {prevFirstBet !== playerCount && winner === 0 && gameOver === false && (
+          <span className={style.startRound}>******************|||||||| </span>
         )}
 
         <span>{` (( OPPONENT ))`}</span>
@@ -32,25 +32,25 @@ const Opponent = ({ playerCount, gameOver, winner, prevFirstBet, opponent, turn,
           <span> WINS THE CURRENT POT!</span>
         )}
 
-        {playerCount !== turn && winner === 0 && gameOver === false && (
-          <span className={style.turn}> ||||||||******************</span>
+        {prevFirstBet !== playerCount && winner === 0 && gameOver === false && (
+          <span className={style.startRound}> ||||||||******************</span>
         )}
       </div>
 
 
-      <div className={style.oppBT}>
-        {prevFirstBet !== playerCount && (
-          <div className={style.betTracker}>[UNDER THE GUN]</div>
+      <div className={style.BTcontainer}>
+        {playerCount !== turn && winner === 0 && gameOver === false && bettingRound > 0 && (
+          <div className={style.betTracker}>[BET]</div>
         )}
-        {prevFirstBet === playerCount && (
-          <div className={style.betTrackerHidden}>[UNDER THE GUN]</div>
+        {(playerCount === turn || winner > 0 || gameOver === true || bettingRound === 0) && (
+          <div className={style.betTrackerHidden}>[BET]</div>
         )}
       </div>
 
 
       <div className={style.cards}>
         {opponent.hand.map((card, i) => {
-          if (/*bettingRound === 5*/winner !== 0 && currentBets.indexOf('fold') === -1) {
+          if (winner !== 0 && currentBets.indexOf('fold') === -1) {
             if (card.indexOf('♦') === -1 && card.indexOf('♥') === -1) {
               if (i === 0) {
                 return (
@@ -85,6 +85,12 @@ const Opponent = ({ playerCount, gameOver, winner, prevFirstBet, opponent, turn,
                 <span>] </span>
               </span>
             );
+          }
+          if (card === '') {
+            if (i === 0) {
+              return (<span key={`${i}: ${card}`}>{' [ - ] ,'}</span>);
+            }
+            return (<span key={`${i}: ${card}`}>{' [ - ]'}</span>);
           }
           if (i === 0) {
             return (<span key={`${i}: ${card}`}>{' [ ? ] ,'}</span>);

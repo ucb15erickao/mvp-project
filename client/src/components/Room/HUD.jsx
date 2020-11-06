@@ -1,14 +1,16 @@
 import React from 'react';
 import style from '../../style.css';
 
-const HUD = ({ clicker, changeBet, gameOver, winner, playerCount, turn, currentBets, player, opponent }) => {
+const HUD = ({ clicker, changeBet, gameOver, winner, playerCount, turn, bettingRound, currentBets, player, opponent }) => {
   if (gameOver === true) {
     return (
       <div className={style.HUD}>
         <button onClick={clicker} value='reset'>PLAY AGAIN</button>
       </div>
     );
-  } else if (winner !== 0) {
+
+
+  } else if (winner !== 0 || bettingRound === 0) {
     if (Number(currentBets[currentBets.length - 1]) === playerCount) {
       return (
         <div className={style.HUD}>
@@ -22,6 +24,8 @@ const HUD = ({ clicker, changeBet, gameOver, winner, playerCount, turn, currentB
         </div>
       );
     }
+
+
   } else if (playerCount === turn) {
     const bets = [];
     for (let i = player.minBet, { chips } = player; i <= chips; i++) {
@@ -52,6 +56,8 @@ const HUD = ({ clicker, changeBet, gameOver, winner, playerCount, turn, currentB
         <button onClick={clicker} value='fold'>FOLD</button>
       </div>
     );
+
+
   } else {
     return (
       <div className={style.HUD}>

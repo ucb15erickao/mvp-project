@@ -7,14 +7,15 @@ const Player = ({ playerCount, gameOver, winner, prevFirstBet, turn, bettingRoun
     <div className={style.playerContainer}>
 
       <div className={style.cards}>
-        {hand[0].indexOf('♦') === -1 && hand[0].indexOf('♥') === -1 && (
+        {hand[0] === '' && (<span> [ - ] </span>)}
+        {hand[0].indexOf('♦') === -1 && hand[0].indexOf('♥') === -1 && hand[0] !== '' && (
           <span>
             <span> [ </span>
             <span className={style.black}>{hand[0]}</span>
             <span> ] </span>
           </span>
         )}
-        {hand[0].indexOf('♣') === -1 && hand[0].indexOf('♠') === -1 && (
+        {hand[0].indexOf('♣') === -1 && hand[0].indexOf('♠') === -1 && hand[0] !== '' && (
           <span>
             <span> [ </span>
             <span className={style.red}>{hand[0]}</span>
@@ -24,14 +25,15 @@ const Player = ({ playerCount, gameOver, winner, prevFirstBet, turn, bettingRoun
 
         <span> , </span>
 
-        {hand[1].indexOf('♦') === -1 && hand[1].indexOf('♥') === -1 && (
+        {hand[1] === '' && (<span> [ - ] </span>)}
+        {hand[1].indexOf('♦') === -1 && hand[1].indexOf('♥') === -1 && hand[0] !== '' && (
           <span>
             <span> [ </span>
             <span className={style.black}>{hand[1]}</span>
             <span> ] </span>
           </span>
         )}
-        {hand[1].indexOf('♣') === -1 && hand[1].indexOf('♠') === -1 && (
+        {hand[1].indexOf('♣') === -1 && hand[1].indexOf('♠') === -1 && hand[0] !== '' && (
           <span>
             <span> [ </span>
             <span className={style.red}>{hand[1]}</span>
@@ -41,19 +43,19 @@ const Player = ({ playerCount, gameOver, winner, prevFirstBet, turn, bettingRoun
       </div>
 
 
-      <div className={style.pBT}>
-        {prevFirstBet === playerCount && (
-          <div className={style.betTracker}>[UNDER THE GUN]</div>
+      <div className={style.BTcontainer}>
+        {playerCount === turn && winner === 0 && gameOver === false && bettingRound > 0 && (
+          <div className={style.betTracker}>[BET]</div>
         )}
-        {prevFirstBet !== playerCount && (
-          <div className={style.betTrackerHidden}>[UNDER THE GUN]</div>
+        {(playerCount !== turn || winner > 0 || gameOver === true || bettingRound === 0) && (
+          <div className={style.betTrackerHidden}>[BET]</div>
         )}
       </div>
 
 
       <div className={style.player}>
-        {playerCount === turn && winner === 0 && gameOver === false && (
-          <span className={style.turn}>******************|||||||| </span>
+        {prevFirstBet === playerCount && winner === 0 && gameOver === false && (
+          <span className={style.startRound}>******************|||||||| </span>
         )}
 
         <span>{` (( PLAYER ${playerCount} ))`}</span>
@@ -61,8 +63,8 @@ const Player = ({ playerCount, gameOver, winner, prevFirstBet, turn, bettingRoun
           <span> WINS THE CURRENT POT!</span>
         )}
 
-        {playerCount === turn && winner === 0 && gameOver === false && (
-          <span className={style.turn}> ||||||||******************</span>
+        {prevFirstBet === playerCount && winner === 0 && gameOver === false && (
+          <span className={style.startRound}> ||||||||******************</span>
         )}
       </div>
 
@@ -71,13 +73,13 @@ const Player = ({ playerCount, gameOver, winner, prevFirstBet, turn, bettingRoun
         {chips < 0 && (
           <span>
             <span className={style.lost}>{`< CHIPS : ${chips} >`}</span>
-            <span>{` -------- < CURRENT BET :  ${bet}`}</span>
+            <span>{` ----- < CURRENT BET :  ${bet}`}</span>
           </span>
         )}
         {chips >= 0 && (
-          <span>{`< CHIPS : ${chips} > -------- < CURRENT BET :  ${bet}`}</span>
+          <span>{`< CHIPS : ${chips} > ----- < CURRENT BET :  ${bet}`}</span>
         )}
-        {bettingRound === 0 && bet === 1 && (
+        {bettingRound === 1 && bet === 1 && (
           <span className={style.ante}> [ante]</span>
         )}
         <span> &gt;</span>

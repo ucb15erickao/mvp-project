@@ -55,34 +55,34 @@ const Opponent = ({ playerCount, gameOver, winner, prevFirstBet, opponent, turn,
               if (i === 0) {
                 return (
                   <span key={`${i}: ${card}`}>
-                    <span> [</span>
+                    <span> [ </span>
                     <span className={style.black}>{card}</span>
-                    <span>] ,</span>
+                    <span> ] ,</span>
                   </span>
                 );
               }
               return (
                 <span key={`${i}: ${card}`}>
-                  <span> [</span>
+                  <span> [ </span>
                   <span className={style.black}>{card}</span>
-                  <span>] </span>
+                  <span> ] </span>
                 </span>
               );
             }
             if (i === 0) {
               return (
                 <span key={`${i}: ${card}`}>
-                  <span> [</span>
+                  <span> [ </span>
                   <span className={style.red}>{card}</span>
-                  <span>] ,</span>
+                  <span> ] ,</span>
                 </span>
               );
             }
             return (
               <span key={`${i}: ${card}`}>
-                <span> [</span>
+                <span> [ </span>
                 <span className={style.red}>{card}</span>
-                <span>] </span>
+                <span> ] </span>
               </span>
             );
           }

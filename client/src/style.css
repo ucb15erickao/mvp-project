@@ -61,22 +61,19 @@ html {
   font-weight: 900;
 }
 
-.betTracker {
+.BTcontainer {
+  margin: 8px 0;
   font-family: serif;
-  color: red;
   font-size: 15px;
   letter-spacing: 2px;
+}
+
+.betTracker {
+  color: red;
 }
 
 .betTrackerHidden {
-  font-family: serif;
   color: green;
-  font-size: 15px;
-  letter-spacing: 2px;
-}
-
-.BTcontainer {
-  margin: 8px 0;
 }
 
 .bettingLine {
@@ -137,7 +134,7 @@ html {
 }
 
 .dealer {
-  margin-top: 8px;
+  margin-top: 0;
 }
 
 .gameOver {

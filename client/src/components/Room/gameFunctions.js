@@ -34,7 +34,7 @@ const determineWinner = (player1, player2) => {
       }
     }
   }
-  return [[null, null], 3];
+  return [null, 3];
 };
 
 const pick5 = (cards) => {
@@ -48,7 +48,7 @@ const pick5 = (cards) => {
     const hand = findSF(flushes, straights);
     if (hand.length > 0) {
       console.log('return straightFlushes:', hand);
-      return { score: 8, hand, high: hand[0] };
+      return { score: 8, hand, high: getCardFromValue(hand[0]) };
     }
   }
   const repeats = findRepeats(values);
@@ -57,42 +57,42 @@ const pick5 = (cards) => {
     if (repeats[i].length === 4) {
       const hand = fillHand(repeats[i], values);
       console.log('return quad:', hand);
-      return { score: 7, hand, high: hand[0] };
+      return { score: 7, hand, high: getCardFromValue(hand[0]) };
     }
     if (repeats[i].length === 3) {
       const hand = findFH(repeats);
       if (hand.length > 0) {
         console.log('return fullHouse:', hand);
-        return { score: 6, hand, high: hand[0] };
+        return { score: 6, hand, high: getCardFromValue(hand[0]) };
       }
       triples = repeats[i];
     }
   }
   if (flushes.length > 0) {
-    console.log('return flushes:', straights);
-    return { score: 5, hand: flushes[0], high: flushes[0][0] };
+    console.log('return flushes:', flushes);
+    return { score: 5, hand: flushes[0], high: getCardFromValue(flushes[0][0]) };
   }
   if (straights.length > 0) {
     console.log('return straights:', straights);
-    return { score: 4, hand: straights[0], high: straights[0][0] };
+    return { score: 4, hand: straights[0], high: getCardFromValue(straights[0][0]) };
   }
   if (triples.length > 0) {
     console.log('return triples:', triples);
     const hand = fillHand(triples, values);
-    return { score: 3, hand, high: hand[0] };
+    return { score: 3, hand, high: getCardFromValue(hand[0]) };
   }
   const twoPairs = findTP(repeats);
   if (twoPairs.length > 0) {
     console.log('return twoPairs:', twoPairs);
     const hand = fillHand(twoPairs, values);
-    return { score: 2, hand, high: hand[0] };
+    return { score: 2, hand, high: getCardFromValue(hand[0]) };
   }
   if (repeats.length > 0) {
     console.log('return pair:', repeats[0]);
     const hand = fillHand(repeats[0], values);
-    return { score: 1, hand, high: hand[0] };
+    return { score: 1, hand, high: getCardFromValue(hand[0]) };
   }
-  return { score: 0, hand: values.slice(0, 5), high: hand[0] };
+  return { score: 0, hand: values.slice(0, 5), high: getCardFromValue(hand[0]) };
 };
 
 const getCardValue = (card) => {

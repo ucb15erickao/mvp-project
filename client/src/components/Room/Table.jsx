@@ -105,10 +105,12 @@ class Table extends React.Component {
             console.log('p1 hand:', p1play);
             const p2play = pick5(board.concat(p2.hand));
             console.log('p2 hand:', p2play);
-            updates.winner  = determineWinner(p1play, p2play)[1];
-            if (updates.winner[0]) {
-              p1play.high = updates.winner[0][0];
-              p2play.high =  updates.winner[0][1];
+            const judge = determineWinner(p1play, p2play);
+            console.log('judge:', judge);
+            updates.winner = judge[1];
+            if (judge[0] !== null) {
+              p1play.high = judge[0][0];
+              p2play.high =  judge[0][1];
             }
             p1play.hand = convertHand(p1play.hand), p2play.hand = convertHand(p2play.hand);
             updates.winning = p1play, updates.losing = p2play;

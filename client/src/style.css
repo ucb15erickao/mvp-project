@@ -47,7 +47,8 @@ html {
 }
 
 .nameTag {
-  margin: 5px 0;
+  margin: 10px 0;
+  font-size: 23px;
 }
 
 .label {
@@ -73,17 +74,30 @@ html {
 
 .BTcontainer {
   margin: 5px 0;
-  font-family: monospace;
+  padding: 0;
+  border: 0;
+  font-family: serif;
   font-size: 19px;
   font-weight: 800;
+  letter-spacing: 0;
 }
 
 .betTracker {
-  color: yellow;
+  font-family: monospace;
+  color: blue;
+  text-decoration: underline;
 }
 
 .betTrackerHidden {
+  font-family: monospace;
   color: green;
+}
+
+.betText {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  text-decoration: underline double;
 }
 
 .bettingLine {
@@ -130,25 +144,33 @@ html {
   display: block;
   position: absolute;
   z-index: 1;
-  top: 24px;
-  left: 2px;
-  font-family: sans-serif;
+  top: 23px;
+  left: -3px;
+  font-family: monospace;
   font-size: 10px;
-  font-weight: normal;
-  color: yellow;
+  font-weight: bold;
+  color: blue;
   line-height: 100%;
-  margin-right: 1px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  letter-spacing: 0;
+}
+
+.anteText {
+  text-decoration: underline;
   letter-spacing: 0.5px;
 }
 
 .winMessage {
-  border-top: 1px solid yellow;
-  border-bottom: 1px solid yellow;
+  border-top: 2px solid white;
+  border-bottom: 2px solid white;
   padding: 3px 0;
-  font-family: serif;
+  font-family: monospace;
   font-size: 14.5px;
   font-weight: normal;
-  color: yellow;
+  letter-spacing: 0;
+  margin: 0;
 }
 
 .cardMessage {
@@ -156,25 +178,30 @@ html {
   font-family: sans-serif;
   font-size: 14px;
   font-weight: bold;
-  letter-spacing: 1px;
-  margin-right: 3px;
+  letter-spacing: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.highCard {
+  font-family: serif;
+  font-size: 11px;
+  letter-spacing: 0;
 }
 
 .potMessage {
-  font-family: sans-serif;
+  font-family: monospace;
   font-weight: 800;
-  color: #654321;
-  font-size: 15px;
+  color: blue;
   letter-spacing: 0;
-  margin-left: 2px;
+  margin: 0;
+  padding: 0;
+  text-decoration: underline double;
 }
 
 .currencyMessage {
-  font-family: monospace;
   color: rgb(32, 188, 32);
-  font-size: 15px;
-  font-weight: 800;
-  margin: 0 3px;
+  margin: 0;
 }
 
 .comma {

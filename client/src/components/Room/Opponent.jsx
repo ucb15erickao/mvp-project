@@ -6,9 +6,6 @@ import render from './RenderText';
 import style from '../../style.css';
 
 const Opponent = ({ playerCount, gameOver, winner, winning, losing, prevFirstBet, opponent, turn, bettingRound, currentBets, pot }) => {
-  console.log('bettingRound:', bettingRound);
-  console.log('winner:', winner);
-  console.log('playerCount:', playerCount);
   return (
     <div className={style.opponentContainer}>
 
@@ -21,44 +18,25 @@ const Opponent = ({ playerCount, gameOver, winner, winning, losing, prevFirstBet
       <div className={style.BTcontainer}>
 
         {playerCount !== turn && winner === 0 && gameOver === false && bettingRound > 0 && (
-          <span className={style.betTracker}>[BET]</span>
+          <span className={style.betTracker}>{ render.betTracker() }</span>
         )}
 
         {(((playerCount === turn && winner === 0) || bettingRound === 0 || (gameOver === false && winner === playerCount)) && winner !== 3) && (
-          <span className={style.betTrackerHidden}>[BET]</span>
+          <span className={style.betTrackerHidden}>{ render.betTracker() }</span>
         )}
 
-        {winner !== 0 && winner !== playerCount && winner !== 3 && currentBets[currentBets.length - 1] !== 'fold' && (
-          <span className={style.winMessage}>
-            <span>{render.pokerHands[winning.score]} </span>
-            { render.smallCards(winning.hand) }
-            <span>{` BEATS `}</span>
-            <span>{render.pokerHands[losing.score]} </span>
-            { render.smallCards(losing.hand) }
-            <span>{` FOR THE POT `}</span>
-            { render.textPot(pot) }
-          </span>
-        )}
+        {winner !== 0 && winner !== playerCount && winner !== 3 && currentBets[currentBets.length - 1] !== 'fold' && ( <span>{ render.winMessage(winning, losing, pot) }</span> )}
 
         {winner !== 0 && winner !== playerCount && currentBets[currentBets.length - 1] === 'fold' && (
-          <span className={style.winMessage}>{`YOU FOLDED & OPPONENT WINS THE POT (${pot}).`}</span>
-        )}
-
-        {winner === 3 && (
           <span className={style.winMessage}>
-            <span>{render.pokerHands[winning.score]} </span>
-            { render.smallCards(winning.hand) }
-            <span>{` TIES `}</span>
-            <span>{render.pokerHands[losing.score]} </span>
-            { render.smallCards(losing.hand) }
-            <span>{` FOR A SPLIT POT `}</span>
-            { render.textPot(pot / 2) }
+            {`YOU FOLDED & OPPONENT WINS THE POT `}
+            { render.textPot(pot)}
           </span>
         )}
 
+        {winner === 3 && ( <span>{ render.tieMessage(winning, losing, pot) }</span> )}
+
       </div>
-
-
 
     </div>
   );

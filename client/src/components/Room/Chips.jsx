@@ -18,7 +18,11 @@ const Chips = ({ chips, bet, bettingRound }) => (
     <span> CURRENT BET : </span>
     <div className={style.currency}>
       {bettingRound === 1 && bet === 1 && (
-        <span className={style.ante}>[ante]</span>
+        <span className={style.ante}>
+          {`{`}
+          <span className={style.anteText}>ante</span>
+          {`}`}
+        </span>
       )}
       {chips < 0 && (<span className={style.noBet}>{bet}</span>)}
       {chips >= 0 && (<span>{bet}</span>)}

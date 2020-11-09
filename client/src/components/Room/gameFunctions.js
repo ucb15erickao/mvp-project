@@ -1,5 +1,5 @@
-const shuffleDeck = () => {
-  const deck = ['A♣', 'A♦',  'A♥',  'A♠',  '2♣',  '2♦', '2♥', '2♠', '3♣',  '3♦',  '3♥',  '3♠',  '4♣', '4♦', '4♥', '4♠',  '5♣',  '5♦',  '5♥',  '5♠', '6♣', '6♦', '6♥',  '6♠',  '7♣',  '7♦',  '7♥', '7♠', '8♣', '8♦',  '8♥',  '8♠',  '9♣',  '9♦', '9♥', '9♠', '10♣', '10♦', '10♥', '10♠', 'J♣', 'J♦', 'J♥', 'J♠',  'Q♣',  'Q♦',  'Q♥',  'Q♠', 'K♣', 'K♦', 'K♥',  'K♠'];
+const shuffleDeck1 = () => {
+  const deck = ['A♣', 'A♦', 'A♥', 'A♠', '2♣', '2♦', '2♥', '2♠', '3♣', '3♦', '3♥', '3♠', '4♣', '4♦', '4♥', '4♠', '5♣', '5♦', '5♥', '5♠', '6♣', '6♦', '6♥', '6♠', '7♣', '7♦', '7♥', '7♠', '8♣', '8♦', '8♥', '8♠', '9♣', '9♦', '9♥', '9♠', '10♣', '10♦', '10♥', '10♠', 'J♣', 'J♦', 'J♥', 'J♠', 'Q♣', 'Q♦', 'Q♥', 'Q♠', 'K♣', 'K♦', 'K♥', 'K♠'];
   for (let i = 0, { length } = deck; i < length; i++) {
     const randomIndex = Math.floor(Math.random() * length);
     const currentCard = deck[i];
@@ -9,21 +9,90 @@ const shuffleDeck = () => {
   return deck;
 };
 
+const shuffleDeck = () => {
+  const deck = ['A♣', '2♣', 'A♦', '6♠', 'A♥', 'A♠', '2♦', '9♣', 'K♠', '2♥', '2♠', '3♣', '3♦', '3♥', '3♠', '4♣', '4♦', '4♥', '4♠', '5♣', '5♦', '5♥', '5♠', '6♣', '6♦', '6♥', '7♣', '7♦', '7♥', '7♠', '8♣', '8♦', '8♥', '8♠', '9♦', '9♥', '9♠', '10♣', '10♦', '10♥', '10♠', 'J♣', 'J♦', 'J♥', 'J♠', 'Q♣', 'Q♦', 'Q♥', 'Q♠', 'K♣', 'K♦', 'K♥'];
+  return deck.reverse();
+};
+
 const deal = (deck) => {
   return [deck.pop(), deck];
 };
 
 const determineWinner = (player1, player2) => {
-  const [score1, hand1] = player1;
-  const [score2, hand2] = player2;
-  if (score1 > score2) {  console.log('hand1:', hand1); return 1  }
-  else if (score1 < score2) {  console.log('hand2:', hand2); return 2  }
+  const score1 = player1.score, hand1 = player1.hand;
+  const score2 = player2.score, hand2 = player2.hand;
+  if (score1 > score2) {  console.log('hand1:', hand1); return [null, 1]  }
+  else if (score1 < score2) {  console.log('hand2:', hand2); return [null, 2]  }
   else {
     for (let i = 0; i < 5; i++) {
-      if (Number(hand1[i]) > Number(hand2[i])) {  console.log(`hand1[${i}]: ${hand1[i]}`); return 1  }
-      else if (Number(hand1[i]) < Number(hand2[i])) {  console.log(`secondHand[${i}]: ${hand2[i]}`); return 2  }
+      if (Number(hand1[i]) > Number(hand2[i])) {
+        console.log(`hand1[${i}]: ${hand1[i]}`);
+        return 1[[getCardFromValue(hand1[i]), getCardFromValue(hand2[i])], 1];
+      } else if (Number(hand1[i]) < Number(hand2[i])) {
+        console.log(`secondHand[${i}]: ${hand2[i]}`);
+        return [[getCardFromValue(hand1[i]), getCardFromValue(hand2[i])], 2];
+      }
     }
   }
+  return [[null, null], 3];
+};
+
+const pick5 = (cards) => {
+  const values = [];
+  for (let i = 0; i < cards.length; i++) {  values.push(getCardValue(cards[i]))  }
+  values.sort((a, b) => {  return b - a  });
+  console.log('sorted values:', values);
+  const flushes = findFlush(values);
+  const straights = findStraight(values);
+  if (straights.length > 0 && flushes.length > 0) {
+    const hand = findSF(flushes, straights);
+    if (hand.length > 0) {
+      console.log('return straightFlushes:', hand);
+      return { score: 8, hand, high: hand[0] };
+    }
+  }
+  const repeats = findRepeats(values);
+  let triples = [];
+  for (let i = 0; i < repeats.length; i++) {
+    if (repeats[i].length === 4) {
+      const hand = fillHand(repeats[i], values);
+      console.log('return quad:', hand);
+      return { score: 7, hand, high: hand[0] };
+    }
+    if (repeats[i].length === 3) {
+      const hand = findFH(repeats);
+      if (hand.length > 0) {
+        console.log('return fullHouse:', hand);
+        return { score: 6, hand, high: hand[0] };
+      }
+      triples = repeats[i];
+    }
+  }
+  if (flushes.length > 0) {
+    console.log('return flushes:', straights);
+    return { score: 5, hand: flushes[0], high: flushes[0][0] };
+  }
+  if (straights.length > 0) {
+    console.log('return straights:', straights);
+    return { score: 4, hand: straights[0], high: straights[0][0] };
+  }
+  if (triples.length > 0) {
+    console.log('return triples:', triples);
+    const hand = fillHand(triples, values);
+    return { score: 3, hand, high: hand[0] };
+  }
+  const twoPairs = findTP(repeats);
+  if (twoPairs.length > 0) {
+    console.log('return twoPairs:', twoPairs);
+    const hand = fillHand(twoPairs, values);
+    return { score: 2, hand, high: hand[0] };
+  }
+  if (repeats.length > 0) {
+    console.log('return pair:', repeats[0]);
+    const hand = fillHand(repeats[0], values);
+    return { score: 1, hand, high: hand[0] };
+  }
+  return { score: 0, hand: values.slice(0, 5), high: hand[0] };
 };
 
 const getCardValue = (card) => {
@@ -64,34 +133,6 @@ const convertHand = (hand) => {
   for (let i = 0; i < 5; i++) {  cards.push(getCardFromValue(hand[i]))  }
   return cards;
 }
-
-const pick5 = (cards) => {
-  const values = [];
-  for (let i = 0; i < cards.length; i += 1) {  values.push(getCardValue(cards[i]))  }
-  values.sort((a, b) => {  return b - a  });
-  console.log('sorted values:', values);
-  const flushes = findFlush(values);
-  const straights = findStraight(values);
-  if (straights.length > 0 && flushes.length > 0) {
-    const straightFlushes = findSF(flushes, straights);
-    if (straightFlushes.length > 0) {  return [9, straightFlushes[0]]  }
-  }
-  const repeats = findRepeats(values);
-  for (let i = 0; i < repeats.length; i += 1) {
-    if (repeats[i].length === 4) {  return [8, fillHand(repeats[i], values)]  }
-  }
-  const fullHouses = findFH(repeats);
-  if (fullHouses.length > 0) {  return [7, fullHouses[0]]  }
-  if (flushes.length > 0) {  return [6, flushes[0]]  }
-  if (straights.length > 0) {  return [5, straights[0]]  }
-  for (let i = 0, { length } = repeats; i < length; i += 1) {
-    if (repeats[i].length === 3) {  return [4, fillHand(repeats[i], values)]  }
-  }
-  const twoPairs = findTP(repeats);
-  if (twoPairs.length > 0) {  return [3, fillHand(twoPairs[0], values)]  }
-  if (repeats.length > 0) {  return [2, fillHand(repeats[0], values)]  }
-  return [1, values.slice(0, 5)];
-};
 
 const findStraight = (cards) => {
   const straights = {};
@@ -148,8 +189,8 @@ const findSF = (flushes, straights) => {
   const straightFlushes = [];
   if (flushes.length === 0 || straights.length === 0) {  return straightFlushes  }
   else {
-    for (let i = 0; i < flushes.length; i += 1) {
-      for (let j = 0; j < straights.length; j += 1) {
+    for (let i = 0; i < flushes.length; i++) {
+      for (let j = 0; j < straights.length; j++) {
         if (JSON.stringify(flushes[i]) === JSON.stringify(straights[j])) {  straightFlushes.push(straights[j])  }
       }
     }
@@ -160,38 +201,46 @@ const findSF = (flushes, straights) => {
 const findRepeats = (cards) => {
   const repeats = {};
   for (let i = 0; i < cards.length; i++) {
-    const currentSet = [cards[i]];
-    const currentValue = cards[i].slice(0, cards[i].length - 1);
-    const copy = cards.slice(i + 1);
-    for (let j = 0; j < copy.length; j++) {
-      const compareValue = copy[j].slice(0, copy[j].length - 1);
-      if (Number(currentValue) - compareValue === 0) {
-        currentSet.push(copy[j]);
+    if (JSON.stringify(repeats).indexOf(cards[i]) === -1) {
+      const currentSet = [cards[i]];
+      const currentValue = cards[i].slice(0, cards[i].length - 1);
+      const copy = cards.slice(i + 1);
+      for (let j = 0; j < copy.length; j++) {
+        const compareValue = copy[j].slice(0, copy[j].length - 1);
+        if (Number(currentValue) - compareValue === 0) {
+          currentSet.push(copy[j]);
+        }
       }
-    }
-    if (currentSet.length > 1) {
-      currentSet.sort((a, b) => {  return b - a  });
-      const str = JSON.stringify(currentSet);
-      if (repeats[str] === undefined) {  repeats[str] = currentSet  }
+      if (currentSet.length > 1) {
+        currentSet.sort((a, b) => { return b - a });
+        const str = JSON.stringify(currentSet);
+        if (repeats[str] === undefined) { repeats[str] = currentSet }
+      }
     }
   }
   console.log('repeats:', Object.values(repeats));
   return Object.values(repeats);
 };
 
-const findFH = (multiples) => {
-  const fullHouses = [];
-  return fullHouses;
+const findFH = (repeated) => {
+  const multiples = repeated.slice();
+  let trio = [], pair = [];
+  for (let i = 0; i < multiples.length; i++) {
+    if (multiples[i].length === 3) {  trio = multiples.splice(i, 1)[0]; break  }
+  }
+  for (let i = 0; i < multiples.length; i++) {
+    if (pair.length === 0) {  pair = multiples[i].slice(0, 2)  }
+    else if (multiples[i][0] > pair[0]) {  pair = multiples[i].slice(0, 2)  }
+  }
+  if (trio.length === 0 || pair.length === 0) {  return []  }
+  return trio.concat(pair);
 };
 
 const findTP = (multiples) => {
-  const twoPairs = [];
-  return twoPairs;
-};
-
-const findHP = (multiples) => {
-  const highPair = [];
-  return highPair;
+  if (multiples.length > 1) {
+    return multiples[0].concat(multiples[1]);
+  }
+  return [];
 };
 
 const fillHand = (combo, allCards) => {

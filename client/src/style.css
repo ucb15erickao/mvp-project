@@ -3,15 +3,19 @@ html {
 }
 
 .container {
+  display: block;
+  justify-content: center;
+  text-align: center;
   width: 88rem;
   margin: 0 auto;
   background-color: white;
 }
 
 .room {
+  display: block;
+  position: relative;
   border: 0;
   margin: 0;
-  margin-top: 18px;
   padding: 18px;
   box-sizing: border-box;
   font-family: sans-serif;
@@ -21,55 +25,61 @@ html {
 }
 
 .titleBar {
+  margin: 18px;
+  margin-bottom: 8px;
   font-family: serif;
   color: royalblue;
-  text-align: center;
 }
 
 .table {
-  margin: 0;
-  padding: 18px 88px;
-  border-radius: 50%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 525px;
+  vertical-align: auto;
+  padding: 28px 88px;
+  border-radius: 50%;
+  height: 500px;
   background-color: green;
-  text-align: center;
 }
 
-.playerContainer {
-  vertical-align: bottom;
+.playerContainer, .opponentContainer {
+  display: block;
 }
 
-.opponentContainer {
-  vertical-align: top;
+.nameTag {
+  margin: 5px 0;
 }
 
-.player {
-  margin-bottom: 8px;
+.label {
+  font-family: monospace;
+  letter-spacing: 0.32px;
+  box-sizing: border-box;
+  border-bottom: 1px dotted white;
 }
 
-.opponent {
-  margin-top: 8px;
+.hiddenLabel {
+  font-family: monospace;
+  letter-spacing: 0.32px;
+  border-bottom: 1px solid transparent;
 }
 
 .startRound {
   font-family: serif;
   color: royalblue;
   font-size: 15px;
+  line-height: 50%;
   font-weight: 900;
 }
 
 .BTcontainer {
-  margin: 8px 0;
-  font-family: serif;
-  font-size: 15px;
-  letter-spacing: 2px;
+  margin: 5px 0;
+  font-family: monospace;
+  font-size: 19px;
+  font-weight: 800;
 }
 
 .betTracker {
-  color: red;
+  color: yellow;
 }
 
 .betTrackerHidden {
@@ -83,11 +93,10 @@ html {
   font-size: 16px;
   font-weight: 800;
   letter-spacing: 1px;
-  vertical-align: baseline;
 }
 
 .pot {
-  margin-top: 8px;
+  margin-top: 3px;
   color: #654321;
   font-family: serif;
   font-size: 18px;
@@ -95,25 +104,109 @@ html {
   letter-spacing: 2px;
 }
 
+.currency {
+  display: inline-block;
+  position: relative;
+  box-sizing: border-box;
+  border: 1px solid #654321;
+  background-color: rgb(0, 118, 0);
+  border-radius: 18%;
+  width: fit-content;
+  min-width: 32px;
+  height: 25px;
+  margin: 0 1px;
+  padding: 1px 5px;
+  font-family: monospace;
+  color: rgb(32, 188, 32);
+  font-size: 17px;
+}
+
+.noBet {
+  color: grey;
+  font-size: 19px;
+}
+
 .ante {
+  display: block;
+  position: absolute;
+  z-index: 1;
+  top: 24px;
+  left: 2px;
   font-family: sans-serif;
-  font-size: 9px;
-  vertical-align: super;
+  font-size: 10px;
+  font-weight: normal;
+  color: yellow;
+  line-height: 100%;
   margin-right: 1px;
+  letter-spacing: 0.5px;
+}
+
+.winMessage {
+  border-top: 1px solid yellow;
+  border-bottom: 1px solid yellow;
+  padding: 3px 0;
+  font-family: serif;
+  font-size: 14.5px;
+  font-weight: normal;
+  color: yellow;
+}
+
+.cardMessage {
+  color: white;
+  font-family: sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin-right: 3px;
+}
+
+.potMessage {
+  font-family: sans-serif;
+  font-weight: 800;
+  color: #654321;
+  font-size: 15px;
   letter-spacing: 0;
+  margin-left: 2px;
+}
+
+.currencyMessage {
+  font-family: monospace;
+  color: rgb(32, 188, 32);
+  font-size: 15px;
+  font-weight: 800;
+  margin: 0 3px;
+}
+
+.comma {
+  letter-spacing: 0;
+  margin: 0;
+  margin-left: 1px;
+  margin-right: 3px;
+  font-size: 10px;
 }
 
 .cards {
   font-size: 32px;
   margin: 0;
+  padding: 0;
+  border: 0;
+  line-height: 132%;
 }
 
 .black {
   color: black;
+  letter-spacing: 0;
+  margin: 0;
 }
 
 .red {
   color: red;
+  letter-spacing: 0;
+  margin: 0;
+}
+
+.monospace {
+  font-family: monospace;
 }
 
 .hidden {
@@ -127,14 +220,15 @@ html {
 }
 
 .board {
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  vertical-align: middle;
 }
 
 .dealer {
-  margin-top: 0;
+  margin: 0;
 }
 
 .gameOver {
@@ -142,7 +236,7 @@ html {
   justify-content: center;
 }
 
-.HUD {
+.ControlPanel {
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -150,17 +244,18 @@ html {
   width: 100%;
   margin-top: 32px;
   text-align: center;
-  gap: 132px;
+  gap: 118px;
+
 }
 
 .betLabel {
   font-size: 12px;
 }
 
-.betMenu {
-  outline: none;
-}
-
 .betButton {
   margin-left: 8px;
+}
+
+button, select {
+  outline: none;
 }

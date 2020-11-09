@@ -1,23 +1,23 @@
 import React from 'react';
 import style from '../../style.css';
 
-const HUD = ({ clicker, changeBet, gameOver, winner, playerCount, turn, bettingRound, currentBets, player, opponent }) => {
+const ControlPanel = ({ clicker, changeBet, gameOver, winner, playerCount, turn, bettingRound, currentBets, player, opponent }) => {
   if (gameOver === true || winner !== 0 || bettingRound === 0) {
     if (Number(currentBets[currentBets.length - 1]) === playerCount) {
       return (
-        <div className={style.HUD}>
+        <div className={style.ControlPanel}>
           <button disabled>WAITING FOR OPPONENT</button>
         </div>
       );
     } else if (gameOver === true) {
       return (
-        <div className={style.HUD}>
-          <button onClick={clicker} value={playerCount}>PLAY AGAIN</button>
+        <div className={style.ControlPanel}>
+          <button onClick={clicker} value={playerCount}>CLICK TO PLAY AGAIN</button>
         </div>
       );
     } else {
       return (
-        <div className={style.HUD}>
+        <div className={style.ControlPanel}>
           <button onClick={clicker} value={playerCount}>CONTINUE</button>
         </div>
       );
@@ -30,8 +30,12 @@ const HUD = ({ clicker, changeBet, gameOver, winner, playerCount, turn, bettingR
       bets.push(i);
     }
     return (
-      <div className={style.HUD}>
-        <button onClick={clicker} value='check'>CHECK / CALL</button>
+      <div className={style.ControlPanel}>
+
+        {currentBets.length === 0 ||  (currentBets.length === 1 && currentBets[0] === 'check')
+          ? <button onClick={clicker} value='check'>CHECK</button>
+          : <button onClick={clicker} value='check'>CALL</button>
+        }
 
         <div>
           <label className={style.betLabel}> ADJUST BET : </label>
@@ -58,7 +62,7 @@ const HUD = ({ clicker, changeBet, gameOver, winner, playerCount, turn, bettingR
 
   } else {
     return (
-      <div className={style.HUD}>
+      <div className={style.ControlPanel}>
         <span>WAITING FOR OPPONENT...</span>
       </div>
     )
@@ -66,4 +70,4 @@ const HUD = ({ clicker, changeBet, gameOver, winner, playerCount, turn, bettingR
 
 };
 
-export default HUD;
+export default ControlPanel;

@@ -8,7 +8,7 @@ const Cards = ({ location, hand, winner, currentBets }) => {
       <div className={style.cards}>
         { render.largeCard(hand[0]) }
         <span className={style.monospace}>{` `}</span>
-        <span>{`,`}</span>
+        {`,`}
         <span className={style.monospace}>{` `}</span>
         { render.largeCard(hand[1]) }
       </div>
@@ -20,16 +20,16 @@ const Cards = ({ location, hand, winner, currentBets }) => {
           ? <span>
               { render.largeCard(hand[0]) }
               <span className={style.monospace}>{` `}</span>
-              <span>{`,`}</span>
+              {`,`}
               <span className={style.monospace}>{` `}</span>
               { render.largeCard(hand[1]) }
             </span>
           : <span>
-              <span>{ render.largeCard('?') }</span>
+              { render.largeCard('?') }
               <span className={style.monospace}>{` `}</span>
-              <span>{`,`}</span>
+              {`,`}
               <span className={style.monospace}>{` `}</span>
-              <span>{ render.largeCard('?') }</span>
+              { render.largeCard('?') }
             </span>
         }
       </div>
@@ -41,14 +41,14 @@ const Cards = ({ location, hand, winner, currentBets }) => {
           if (i < 4) {
             return (
               <span key={`${i}: ${card}`}>
-                <span>{ render.largeCard(card) }</span>
+                { render.largeCard(card) }
                 <span className={style.monospace}>{` `}</span>
-                <span>{`,`}</span>
+                {`,`}
                 <span className={style.monospace}>{` `}</span>
               </span>
             );
           }
-          return (<span key={`${i}: ${card}`}>{ render.largeCard(card) }</span>);
+          return ( <span key={`${i}: ${card}`}>{ render.largeCard(card) }</span> );
         })}
       </div>
     );

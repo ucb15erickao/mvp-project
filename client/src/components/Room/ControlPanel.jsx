@@ -31,28 +31,25 @@ const ControlPanel = ({ clicker, changeBet, gameOver, winner, playerCount, turn,
     }
     return (
       <div className={style.ControlPanel}>
-
         {currentBets.length === 0 ||  (currentBets.length === 1 && currentBets[0] === 'check')
           ? <button onClick={clicker} value='check'>CHECK</button>
-          : <button onClick={clicker} value='check'>CALL</button>
+          : <button onClick={clicker} value='call'>CALL</button>
         }
 
         <div>
-          <label className={style.betLabel}> ADJUST BET : </label>
+          <label className={style.betLabel}>{` ADJUST BET : `}</label>
           <select className={style.betMenu} onChange={changeBet}>
             {bets.map((amount, i) => {
               if (i === 0) {
-                return (<option key={amount} value={amount} selected>{amount}</option>);
+                return ( <option key={amount} value={amount} selected>{amount}</option> );
               }
-              return (<option key={amount} value={amount}>{amount}</option>);
+              return ( <option key={amount} value={amount}>{amount}</option> );
             })}
           </select>
-          {bets.length > 0 && (
-            <button className={style.betButton} onClick={clicker} value='bet'>BET</button>
-          )}
-          {bets.length === 0 && (
-            <button className={style.betButton} disabled>BET</button>
-          )}
+          {bets.length > 0
+            ? <button className={style.betButton} onClick={clicker} value='bet'>BET</button>
+            : <button className={style.betButton} disabled>BET</button>
+          }
         </div>
 
         <button onClick={clicker} value='fold'>FOLD</button>
@@ -61,11 +58,7 @@ const ControlPanel = ({ clicker, changeBet, gameOver, winner, playerCount, turn,
 
 
   } else {
-    return (
-      <div className={style.ControlPanel}>
-        <span>WAITING FOR OPPONENT...</span>
-      </div>
-    )
+    return ( <div className={style.ControlPanel}>{`WAITING FOR OPPONENT...`}</div> );
   }
 
 };

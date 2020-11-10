@@ -6,18 +6,13 @@ const Board = ({ playerCount, gameOver, prevFirstBet, pot, board }) => {
   if (gameOver === false) {
     return (
       <div className={style.board}>
-
         <div className={style.dealer}>
           {playerCount !== prevFirstBet
             ? <span>
-                <span>(( </span>
-                <span className={style.label}>DEALER</span>
-                <span> ))</span>
+                {`(( `}<span className={style.label}>DEALER</span>{` ))`}
               </span>
             : <span className={style.hidden}>
-                <span>(( </span>
-                <span className={style.hiddenLabel}>DEALER</span>
-                <span> ))</span>
+                {`(( `}<span className={style.hiddenLabel}>DEALER</span>{` ))`}
               </span>
           }
         </div>
@@ -26,7 +21,7 @@ const Board = ({ playerCount, gameOver, prevFirstBet, pot, board }) => {
           <Cards location={'board'} hand={board} winner={null} currentBets={null} />
           <div className={style.pot}>
             <span className={style.monospace}>{`<<<`}</span>
-            <span>{`  CURRENT POT :  `}</span>
+            {`  CURRENT POT :  `}
             <span className={style.currency}>{pot}</span>
             <span className={style.monospace}>{`  >>>`}</span>
           </div>
@@ -35,18 +30,13 @@ const Board = ({ playerCount, gameOver, prevFirstBet, pot, board }) => {
         <div className={style.dealer}>
           {playerCount === prevFirstBet
             ? <span>
-                <span>(( </span>
-                <span className={style.label}>DEALER</span>
-                <span> ))</span>
+                {`(( `}<span className={style.label}>DEALER</span>{` ))`}
               </span>
             : <span className={style.hidden}>
-                <span>(( </span>
-                <span className={style.hiddenLabel}>DEALER</span>
-                <span> ))</span>
+                {`(( `}<span className={style.hiddenLabel}>DEALER</span>{` ))`}
               </span>
           }
         </div>
-
       </div>
     );
 

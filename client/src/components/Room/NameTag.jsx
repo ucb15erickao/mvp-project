@@ -6,12 +6,12 @@ const NameTag = ({ player, gameOver, winner, playerCount, prevFirstBet }) => (
     {((prevFirstBet === playerCount && player) || (prevFirstBet !== playerCount && !player)) && winner === 0 && gameOver === false && (
       <span className={style.startRound}>{`******************|||||||| `}</span>
     )}
-    <span> (( </span>
+    {` (( `}
     {player === true
-      ? <span className={style.label}>{`PLAYER `}{playerCount}</span>
+      ? <span className={style.label}>{`PLAYER ${playerCount}`}</span>
       : <span className={style.label}>{`OPPONENT`}</span>
     }
-    <span> ))</span>
+    {` ))`}
     {((prevFirstBet === playerCount && player) || (prevFirstBet !== playerCount && !player)) && winner === 0 && gameOver === false && (
       <span className={style.startRound}>{` ||||||||******************`}</span>
     )}

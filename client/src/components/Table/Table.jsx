@@ -4,8 +4,7 @@ import Opponent from './Opponent';
 import Board from './Board';
 import Player from './Player';
 import ControlPanel from './ControlPanel';
-import { gameState, fold, endRound, updatePlayers, updateGame, startRound, newGame } from './gameFunctions';
-import { shuffleDeck, deal, pick5, determineWinner, convertHand } from './cardFunctions';
+import { gameState, fold, endRound, updatePlayers, updateGame, startRound, newGame } from './gameLogic/gameFunctions';
 
 const socket = new WebSocket("ws://localhost:8080");
 class Table extends React.Component {
@@ -92,12 +91,14 @@ class Table extends React.Component {
   };
 
   render() {
+    const { changePage } = this.props;
     const { playerCount, gameOver, winner, winning, losing, prevFirstBet, turn, bettingRound, currentBets, pot, deck, board, p1, p2 } = this.state;
     let opponent = p2, player = p1;
     if (playerCount === 2) {  opponent = p1, player = p2  }
     return (
       <div className={style.container}>
         <div className={style.room}>
+          <button className={style.returnToLobby} onClick={() => { changePage('lobby') }}>RETURN TO CASINO LOBBY</button>
           <h1 className={style.titleBar}>Texas Hold'em</h1>
           <div className={style.table}>
             <Opponent playerCount={playerCount} gameOver={gameOver} winner={winner} winning={winning} losing={losing} prevFirstBet={prevFirstBet} turn={turn} bettingRound={bettingRound} currentBets={currentBets} pot={pot} opponent={opponent} />

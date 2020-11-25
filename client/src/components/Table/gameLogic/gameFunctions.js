@@ -1,4 +1,4 @@
-const { shuffleDeck, deal, pick5, determineWinner, convertHand } = require('./cardFunctions');
+const { shuffleDeck, dealCard, pick5, determineWinner, convertHand } = require('./cardFunctions');
 
 const gameState = {
   playerCount: 0,
@@ -73,15 +73,15 @@ const updateGame = (bettingRound, deck, board, p1, p2) => {
   if (bettingRound === 1) {
     for (let c = 0; c < 2; c++) {
       for (let p = 0; p < 2; p++) {
-        [ eval(`p${p + 1}`).hand[c], deck ] = deal(deck);
+        [ eval(`p${p + 1}`).hand[c], deck ] = dealCard(deck);
       }
     }
   } else if (bettingRound === 2) {
     for (let i = 0; i < 3; i += 1) {
-      [ board[i], deck ] = deal(deck);
+      [ board[i], deck ] = dealCard(deck);
     }
   } else {
-    [ board[bettingRound], deck ] = deal(deck);
+    [ board[bettingRound], deck ] = dealCard(deck);
   }
   return { currentBets: [], deck, board, deal: false };
 };

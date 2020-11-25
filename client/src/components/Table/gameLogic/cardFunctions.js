@@ -14,16 +14,16 @@ const shuffleDeck = () => {
   return deck.reverse();
 };
 
-const deal = (deck) => (  [deck.pop(), deck]  );
+const dealCard = (deck) => (  [deck.pop(), deck]  );
 
 const determineWinner = (player1, player2) => {
   const score1 = player1.score, hand1 = player1.hand;
   const score2 = player2.score, hand2 = player2.hand;
   if (score1 > score2) {
-    console.log('hand1:', hand1);
+    // console.log('hand1 wins:', hand1);
     return [null, 1];
   } else if (score1 < score2) {
-    console.log('hand2:', hand2);
+    // console.log('hand2 wins:', hand2);
     return [null, 2];
   } else {
     for (let i = 0; i < 5; i++) {
@@ -259,4 +259,4 @@ const fillHand = (combo, allCards) => {
   return fullHand;
 };
 
-module.exports = { shuffleDeck, deal, determineWinner, pick5, convertHand };
+module.exports = { shuffleDeck, dealCard, determineWinner, pick5, convertHand };

@@ -31,6 +31,47 @@ html {
   color: royalblue;
 }
 
+.lobby {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 32px;
+  height: 250px;
+  padding: 8px 0;
+}
+
+.nameForm {
+  align-items: center;
+}
+
+.nameInput {
+  margin-left: 5px;
+  outline: none;
+}
+
+.name {
+  margin: 0 8px;
+  color: royalblue;
+  font-size: 132%;
+  font-family: monospace;
+  font-weight: 800;
+}
+
+.lobbyButtons {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: center;
+  gap: 188px;
+}
+
+.returnToLobby {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+}
+
 .table {
   display: flex;
   flex-direction: column;

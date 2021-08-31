@@ -11,7 +11,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      page: 'lobby',
+      page: 'table',
       name: '',
       nameInput: '',
       publicTables: [],
@@ -61,7 +61,7 @@ class App extends React.Component {
   };
 
   privateGame(action) {
-    if (action === 'new') {
+    if (action === 'createNew') {
       //
     } else {
       //4

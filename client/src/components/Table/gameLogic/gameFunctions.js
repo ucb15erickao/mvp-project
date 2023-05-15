@@ -1,6 +1,7 @@
 const { shuffleDeck, dealCard, pick5, determineWinner, convertHand } = require('./cardFunctions');
 
 const gameState = {
+  tableID: 0,
   playerCount: 0,
   gameOver: false,
   winner: 0,

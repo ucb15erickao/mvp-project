@@ -29,7 +29,7 @@ const determineWinner = (player1, player2) => {
     for (let i = 0; i < 5; i++) {
       if (Number(hand1[i]) > Number(hand2[i])) {
         // console.log(`hand1[${i}]: ${hand1[i]}`);
-        return 1[[getCardFromValue(hand1[i]), getCardFromValue(hand2[i])], 1];
+        return [[getCardFromValue(hand1[i]), getCardFromValue(hand2[i])], 1];
       } else if (Number(hand1[i]) < Number(hand2[i])) {
         // console.log(`secondHand[${i}]: ${hand2[i]}`);
         return [[getCardFromValue(hand1[i]), getCardFromValue(hand2[i])], 2];

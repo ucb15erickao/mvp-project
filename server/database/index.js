@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
-var MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost/tables';
+var MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1/tables';
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
 
-const roomSchema = mongoose.Schema({
+const tableSchema = mongoose.Schema({
   _id: Number,
   password: String,
   playerCount: Number,
@@ -22,36 +22,36 @@ const roomSchema = mongoose.Schema({
   p2: { hand: [String], chips: Number, bet: Number, minBet: Number }
 });
 
-const Room = mongoose.model('Room', roomSchema);
+const Table = mongoose.model('Table', tableSchema);
 
-const getRooms = (callback) => {
-  Room.find({}, (getError, roomData) => {
-    callback(getError, roomData);
+const getTables = (callback) => {
+  Table.find({}, (getError, tableData) => {
+    callback(getError, tableData);
   });
 };
 
-const updateRoom = (tid, updates, callback) => {
-  Room.updateOne({ _id: tid }, updates, (postError, postResult) => {
+const updateTable = (tid, updates, callback) => {
+  Table.updateOne({ _id: tid }, updates, (postError, postResult) => {
     callback(postError, postResult);
   });
 };
 
-const createRoom = (tid, callback) => {
-  Room.create({ _id: tid }, (createError, createResult) => {
+const createTable = (tid, callback) => {
+  Table.create({ _id: tid }, (createError, createResult) => {
     callback(createError, createResult);
   });
 }
 
-const deleteRoom = (tid, callback) => {
-  Room.deleteOne({ _id: tid }, (deleteError, deleteResult) => {
+const deleteTable = (tid, callback) => {
+  Table.deleteOne({ _id: tid }, (deleteError, deleteResult) => {
     callback(deleteError, deleteResult);
   });
 }
 
-const deleteAllRooms = (callback) => {
-  Room.deleteMany({}, (deleteError, deleteResult) => {
+const deleteAllTables = (callback) => {
+  Table.deleteMany({}, (deleteError, deleteResult) => {
     callback(deleteError, deleteResult);
   });
 }
 
-module.exports = { Room, getRooms, updateRoom, createRoom, deleteRoom, deleteAllRooms };
+module.exports = { Table, getTables, updateTable, createTable, deleteTable, deleteAllTables };

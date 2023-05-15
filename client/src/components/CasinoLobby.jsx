@@ -24,20 +24,22 @@ const CasinoLobby = ({ changePage, updateInput, setName, name }) => {
                 <div>WELCOME TO THE CASINO! PUT A NAMETAG ON TO PLAY.</div>
                 <br/>
                 <div className={style.lobbyButtons}>
-                  <button disabled>FIND A RANDOM GAME</button>
-                  <button disabled>JOIN A PRIVATE GAME</button>
+                  <button disabled>START A NEW TABLE</button>
+                  <button disabled>JOIN A TABLE</button>
                 </div>
               </div>
             : <div>
                 <div>
                   {`WELCOME,`}
-                  <span className={style.name}>{name}</span>
+                  <span className={style.name}>
+                    {name}
+                  </span>
                   {`!`}
                 </div>
                 <br/>
                 <div className={style.lobbyButtons}>
-                  <button onClick={() => { console.log('public') }}>FIND A PUBLIC TABLE</button>
-                  <button onClick={() => { changePage('private') }}>JOIN A PRIVATE TABLE</button>
+                  <button onClick={() => { changePage('tableList') }}>JOIN A TABLE</button>
+                  <button onClick={() => { changePage('tableSetup') }}>START A NEW TABLE</button>
                 </div>
               </div>
           }
